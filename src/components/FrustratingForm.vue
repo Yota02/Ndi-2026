@@ -1,22 +1,34 @@
 <template>
-  <div class="linux-container">
+  <div class="main-container" :class="{ 'theme-linux': isLinuxInstalled, 'theme-windows': !isLinuxInstalled }">
+
     <header class="terminal-header">
       <div class="traffic-lights">
         <span class="red"></span><span class="yellow"></span><span class="green"></span>
       </div>
-      <div class="title">user@eco-linux:~/petition/save_planet</div>
+      <div class="title">
+        {{ headerTitle }}
+      </div>
     </header>
 
     <main class="terminal-body">
-      <h1><span class="prompt">$</span> ./abandon_proprietary_os.sh</h1>
+      <h1><span class="prompt">$</span> {{ currentScriptName }}</h1>
 
       <div class="mission-brief">
-        <p>Les mises à jour forcées consomment des TWh d'électricité inutilement.</p>
-        <p>Prouvez votre patience. Signez la pétition pour passer au Libre.</p>
+        <transition name="fade" mode="out-in">
+          <div v-if="!isLinuxInstalled" key="win">
+            <p>Système actuel : <strong>Windows {{ windowsVersion }} {{ currentEdition.name }}</strong></p>
+            <p class="warning-text">⚠️ Support terminé. Mise à niveau requise.</p>
+            <p class="debug-text" style="font-size: 0.7rem; color: #444;">(Debug: Input Status: {{ brokenMethod === 'NONE' ? 'MIRACLE MODE' : brokenMethod + ' BROKEN' }})</p>
+          </div>
+          <div v-else key="lin">
+            <p class="success-text">✅ SYSTÈME LIBRE DEBIAN/LINUX INSTALLÉ.</p>
+          </div>
+        </transition>
       </div>
 
-      <div class="input-group">
-        <label for="name-field">Entrez votre nom :</label>
+      <form @submit.prevent class="input-group">
+        <label for="name-field">Identité du citoyen :</label>
+
         <div class="input-wrapper">
           <input
             ref="inputRef"
@@ -24,339 +36,470 @@
             type="text"
             v-model="inputValue"
             @input="handleInput"
-            :disabled="isSystemBusy"
-            placeholder="Tapez ici..."
+            @keydown.enter="handleAction('ENTER')"
+            :disabled="isSystemBusy && !isLinuxInstalled"
+            placeholder="..."
             autocomplete="off"
+            :class="{ 'glitch-effect': isLinuxInstalled }"
           />
           <span class="cursor">_</span>
         </div>
-        <p class="status-log" v-if="lastLog">{{ lastLog }}</p>
-      </div>
 
-      <button v-if="inputValue.length > 8" @click="submitForm" class="btn-linux">
-        sudo submit
-      </button>
+        <p class="status-log" v-if="lastLog">{{ lastLog }}</p>
+
+        <button
+          type="button"
+          v-if="inputValue.length > 0"
+          class="action-btn"
+          @mousedown="handleAction('CLICK')"
+        >
+          {{ isLinuxInstalled ? 'sudo send_petition' : 'executer_formulaire.exe' }}
+        </button>
+      </form>
     </main>
 
-    <transition name="fade">
-      <div v-if="isUpdating" class="windows-update-overlay">
-        <div class="loader-ring"></div>
-        <h2>Configuration des mises à jour de l'input...</h2>
-        <h1>{{ progress }}% effectué</h1>
-        <p>N'éteignez pas votre ordinateur.</p>
-        <p class="subtext">Votre PC redémarrera plusieurs fois.</p>
-      </div>
-    </transition>
+    <template v-if="!isLinuxInstalled">
 
-    <div v-if="showAssistant" class="clippy-popup">
-      <div class="clippy-header">
-        <span>Assistant Saisie</span>
-        <button @click="closeAssistant" class="close-x">×</button>
+      <transition name="fade">
+        <div v-if="overlayState.active" class="fullscreen-overlay" :class="overlayClass">
+
+          <div v-if="overlayState.type === 'BSOD'" class="crash-content">
+            <div class="sad-face">:(</div>
+            <h2>Votre ordinateur a rencontré un problème.</h2>
+            <div class="qr-section">
+              <div class="qr-placeholder">QR</div>
+              <div class="stop-code">
+                <p>{{ progress }}% complet</p>
+                <p>Code d'arrêt : {{ bsodErrorMsg }}</p>
+              </div>
+            </div>
+          </div>
+
+          <div v-else class="update-content">
+            <div v-if="!overlayState.isLinux" class="loader-ring"></div>
+            <div v-else class="loader-dots"></div>
+
+            <h2>{{ updateMessage }}</h2>
+
+            <div class="progress-bar-wrapper" v-if="overlayState.type === 'INSTALL'">
+              <div class="progress-bar-fill" :style="{ width: progress + '%' }"></div>
+            </div>
+            <h1 v-else>{{ progress }}%</h1>
+
+            <p v-if="!overlayState.isLinux">N'éteignez pas l'ordinateur.</p>
+          </div>
+        </div>
+      </transition>
+
+      <div v-if="showBingPopup" class="modal-backdrop-transparent">
+        <transition name="bounce">
+          <div class="clippy-popup shake-animation">
+            <div class="clippy-header">
+              <span>✨ Copilot AI Assistant</span>
+              <button @click="showBingPopup = false">×</button>
+            </div>
+            <div class="clippy-body">
+              <p>Je remarque que vous écrivez "<strong>{{ inputValue }}</strong>".</p>
+              <p>Laissez l'IA générative optimiser votre pensée dans le Cloud !</p>
+              <div class="clippy-actions">
+                <button @click="acceptBing" class="btn-bing-primary">Oui (Recommandé)</button>
+                <button @click="showBingPopup = false" class="btn-bing-secondary">Non (Risqué)</button>
+              </div>
+            </div>
+          </div>
+        </transition>
       </div>
-      <div class="clippy-body">
-        <p>J'ai remarqué que vous essayez de taper "<strong>{{ inputValue }}</strong>".</p>
-        <p>Voulez-vous plutôt rechercher ce terme sur Bing pour économiser de l'énergie ?</p>
-        <div class="clippy-actions">
-          <button @click="acceptBing">Oui (Recommandé)</button>
-          <button @click="closeAssistant" class="btn-secondary">Non, je pollue</button>
+
+      <div v-if="showErrorModal" class="modal-backdrop">
+        <div class="windows-window error-window">
+          <div class="window-header error-header">
+            <span>Erreur Périphérique</span>
+            <button @click="showErrorModal = false">×</button>
+          </div>
+          <div class="window-body">
+            <div class="icon">🚫</div>
+            <h3>Entrée non reconnue</h3>
+            <p>{{ errorModalText }}</p>
+            <button @click="showErrorModal = false" class="btn-secondary">Fermer</button>
+          </div>
         </div>
       </div>
-    </div>
 
+      <div v-if="showPaywall" class="modal-backdrop">
+        <div class="windows-window">
+          <div class="window-header">
+            <span>Windows Update Center</span>
+            <button @click="closePaywall">×</button>
+          </div>
+          <div class="window-body">
+            <div class="icon">⚙️</div>
+            <h3>Mise à niveau disponible</h3>
+            <div class="upgrade-card">
+              <h4>Passer à : Windows {{ nextWindowsVersion }} {{ nextEditionName }}</h4>
+              <p>Inclus : {{ nextFeature }}</p>
+              <p class="price">Prix : <strong>{{ nextPrice }}</strong></p>
+              <button @click="buyUpgrade" class="btn-primary">Installer et Redémarrer</button>
+            </div>
+
+            <div v-if="canInstallLinux" class="linux-option">
+              <div class="divider">OU</div>
+              <p class="hint-text">C'est votre dernière chance avant Windows {{ windowsVersion + 1 }}...</p>
+              <button @click="installLinux" class="btn-linux-install">
+                🐧 Installer Debian GNU/Linux (Gratuit)
+              </button>
+            </div>
+
+            <button @click="closePaywall" class="btn-secondary link-style">
+              Me rappeler plus tard
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </template>
   </div>
 </template>
 
 <script setup>
-import { ref, nextTick } from 'vue';
+import { ref, computed, nextTick, onMounted, reactive } from 'vue';
 
-// --- ÉTATS ---
+// --- CONFIGURATION ---
+const EDITIONS = [
+  { slug: 'home', name: "Famille", price: "145,00 €", feature: "Pubs dans le menu Démarrer" },
+  { slug: 'pro', name: "Professionnel", price: "259,00 €", feature: "BitLocker (Clé perdue)" },
+  { slug: 'ent', name: "Entreprise", price: "Abonnement Mensuel", feature: "Télémétrie Avancée" },
+  { slug: 'ult', name: "Ultimate", price: "439,00 €", feature: "Support Technique par IA" },
+  { slug: 'ai', name: "AI Edition", price: "Vos Données Perso", feature: "Enregistrement d'écran 24/7" }
+];
+const BSOD_ERRORS = ["CRITICAL_PROCESS_DIED", "IRQL_NOT_LESS_OR_EQUAL", "MEMORY_MANAGEMENT"];
+
+// --- ÉTAT GLOBAL ---
+const windowsVersion = ref(10);
+const editionIndex = ref(0);
+const isLinuxInstalled = ref(false);
+const brokenMethod = ref('CLICK'); // 'CLICK', 'ENTER', ou 'NONE' (Miracle)
+
+// État des inputs
 const inputValue = ref('');
 const inputRef = ref(null);
 const keyPressCount = ref(0);
-const isSystemBusy = ref(false); // Bloque l'input
-const isUpdating = ref(false);   // Affiche l'écran bleu
-const progress = ref(0);         // Pourcentage de maj
-const showAssistant = ref(false);
 const lastLog = ref('');
 
-// --- LOGIQUE DU PIÈGE ---
+// Gestion des overlays
+const overlayState = reactive({
+  active: false,
+  type: null,
+  isLinux: false
+});
 
+const progress = ref(0);
+const bsodErrorMsg = ref('');
+const updateMessage = ref('');
+
+// Modals
+const showPaywall = ref(false);
+const showBingPopup = ref(false);
+const showErrorModal = ref(false);
+const errorModalText = ref('');
+
+// --- COMPUTED ---
+const currentEdition = computed(() => EDITIONS[editionIndex.value]);
+
+// Logique de la prochaine édition/version
+const isEndOfCycle = computed(() => editionIndex.value === EDITIONS.length - 1);
+
+const nextEditionIndex = computed(() => (editionIndex.value + 1) % EDITIONS.length);
+const nextWindowsVersion = computed(() => isEndOfCycle.value ? windowsVersion.value + 1 : windowsVersion.value);
+
+const nextEditionName = computed(() => EDITIONS[nextEditionIndex.value].name);
+const nextPrice = computed(() => EDITIONS[nextEditionIndex.value].price);
+const nextFeature = computed(() => EDITIONS[nextEditionIndex.value].feature);
+
+// MODIFICATION : Linux dispo uniquement à la fin du cycle d'éditions
+const canInstallLinux = computed(() => isEndOfCycle.value);
+
+const isSystemBusy = computed(() => overlayState.active || showPaywall.value || showErrorModal.value || showBingPopup.value);
+
+const headerTitle = computed(() =>
+  isLinuxInstalled.value
+    ? 'root@eco-linux:~ (Stable)'
+    : `user@win-${windowsVersion.value}-${currentEdition.value.slug}: (Not Responding)`
+);
+
+const currentScriptName = computed(() => isLinuxInstalled.value ? './welcome_freedom.sh' : 'bloatware_installer.msi');
+
+const overlayClass = computed(() => {
+  if (overlayState.type === 'BSOD') return 'bsod-bg';
+  if (overlayState.isLinux) return 'linux-install-bg';
+  return 'windows-blue-bg';
+});
+
+// --- LOGIQUE DE ROTATION DES PANNES ---
+const rotateBrokenMethod = () => {
+  const rand = Math.random();
+  if (rand < 0.45) {
+    brokenMethod.value = 'CLICK'; // 45% Souris cassée
+  } else if (rand < 0.90) {
+    brokenMethod.value = 'ENTER'; // 45% Clavier cassé
+  } else {
+    brokenMethod.value = 'NONE';  // 10% Miracle (les deux marchent)
+  }
+  console.log(`[SYSTEM] New Input Config: ${brokenMethod.value} broken.`);
+};
+
+onMounted(() => {
+  rotateBrokenMethod();
+});
+
+// --- LOGIQUE METIER ---
+
+// 1. Gestion de la frappe
 const handleInput = () => {
+  if (isLinuxInstalled.value) return;
   keyPressCount.value++;
 
-  // LOGIQUE 1 : Windows Update tous les 3 caractères
-  if (keyPressCount.value % 3 === 0) {
-    triggerFakeUpdate();
+  // Bing intrusif (20%)
+  if (Math.random() > 0.80 && !showBingPopup.value) {
+    showBingPopup.value = true;
+    inputRef.value?.blur();
+  }
+
+  // Update/BSOD aléatoire
+  if (keyPressCount.value % (Math.floor(Math.random() * 3) + 5) === 0) {
+    triggerSystemInterruption();
+  }
+};
+
+// 2. Interruption système
+const triggerSystemInterruption = () => {
+  inputRef.value?.blur();
+  progress.value = 0;
+  overlayState.active = true;
+  overlayState.isLinux = false;
+
+  // 25% de chance de BSOD
+  const willCrash = Math.random() < 0.25;
+
+  if (willCrash) {
+    overlayState.type = 'BSOD';
+    bsodErrorMsg.value = BSOD_ERRORS[Math.floor(Math.random() * BSOD_ERRORS.length)];
+    runProgressLoop(85, () => {
+      setTimeout(() => {
+        resetOverlay();
+        inputValue.value = inputValue.value.slice(0, -3);
+        lastLog.value = `[FATAL] ${bsodErrorMsg.value}. Données perdues.`;
+      }, 3000);
+    });
+  } else {
+    overlayState.type = 'UPDATE';
+    const msgs = ["Optimisation...", "Téléchargement des pubs...", "Nettoyage du disque..."];
+    updateMessage.value = msgs[Math.floor(Math.random() * msgs.length)];
+
+    runProgressLoop(100, () => {
+      setTimeout(resetOverlay, 500);
+    });
+  }
+};
+
+const runProgressLoop = (target, onComplete) => {
+  let speed = overlayState.type === 'BSOD' ? 200 : 250;
+  const interval = setInterval(() => {
+    progress.value += Math.floor(Math.random() * 10) + 2;
+    if (progress.value >= target) {
+      progress.value = target;
+      clearInterval(interval);
+      onComplete();
+    }
+  }, speed);
+};
+
+const resetOverlay = () => {
+  overlayState.active = false;
+  overlayState.type = null;
+  nextTick(() => inputRef.value?.focus());
+};
+
+// 3. Gestion des Actions (Validation)
+const handleAction = (method) => {
+  if (isLinuxInstalled.value) {
+    alert("Votre pétition a été envoyée avec succès via un système libre !");
     return;
   }
 
-  // LOGIQUE 2 : L'assistant apparaît aléatoirement au 5ème ou 8ème caractère
-  if (keyPressCount.value === 5 || keyPressCount.value === 8) {
-    if (Math.random() > 0.3) triggerAssistant();
+  // Vérification de la méthode cassée
+  if (method === brokenMethod.value) {
+    // Si c'est cassé -> Erreur
+    errorModalText.value = method === 'ENTER'
+      ? "La touche ENTREE nécessite le module 'Legacy Input Driver'."
+      : "Votre souris n'est pas certifiée 'Precision'. Clic désactivé.";
+    showErrorModal.value = true;
+  } else {
+    // Si ça marche (ou si c'est un Miracle) -> On affiche le Paywall
+    // C'est là la frustration : même si l'input marche, Windows veut de l'argent.
+    showPaywall.value = true;
   }
 };
 
-const triggerFakeUpdate = () => {
-  // On bloque tout
-  isSystemBusy.value = true;
-  isUpdating.value = true;
+// 4. Upgrade & Installation
+const closePaywall = () => {
+  showPaywall.value = false;
+  triggerSystemInterruption(); // Punition
+};
+
+const buyUpgrade = () => {
+  showPaywall.value = false;
+  startInstall(false);
+};
+
+const installLinux = () => {
+  showPaywall.value = false;
+  startInstall(true);
+};
+
+const startInstall = (isLinux) => {
+  overlayState.active = true;
+  overlayState.type = 'INSTALL';
+  overlayState.isLinux = isLinux;
   progress.value = 0;
 
-  // On retire le focus pour embêter l'utilisateur
-  if(inputRef.value) inputRef.value.blur();
+  updateMessage.value = isLinux
+    ? "Extraction du noyau..."
+    : `Installation de Windows ${nextWindowsVersion.value}...`;
 
-  lastLog.value = "[SYSTEM] Critical Update Service triggered...";
+  const speed = isLinux ? 30 : 100;
 
-  // Simulation de progression irrégulière (très frustrant)
-  let interval = setInterval(() => {
-    // Incrémentation aléatoire
-    const jump = Math.floor(Math.random() * 15) + 1;
-    progress.value += jump;
-
-    // Parfois ça bloque à 99%
-    if (progress.value > 99) progress.value = 99;
-
-    // Fin de la mise à jour
-    if (Math.random() > 0.85 && progress.value >= 90) {
+  const interval = setInterval(() => {
+    progress.value += 2;
+    if (progress.value >= 100) {
       clearInterval(interval);
-      finishUpdate();
+      finishInstall(isLinux);
     }
-  }, 800);
+  }, speed);
 };
 
-const finishUpdate = () => {
-  progress.value = 100;
+const finishInstall = (isLinux) => {
   setTimeout(() => {
-    isUpdating.value = false;
-    isSystemBusy.value = false;
-    lastLog.value = "[SYSTEM] Update installed. Drivers loaded. Ready.";
+    resetOverlay();
 
-    // On remet le focus... mais on efface le dernier caractère (BUG Windows !)
-    nextTick(() => {
-      // Petite méchanceté supplémentaire :
-      // On retire parfois le dernier caractère tapé à cause du "redémarrage"
-      inputValue.value = inputValue.value.slice(0, -1);
-      if(inputRef.value) inputRef.value.focus();
-    });
-  }, 1500); // Petit délai à 100%
-};
+    if (isLinux) {
+      isLinuxInstalled.value = true;
+      inputValue.value = "sudo apt-get install freedom";
+      lastLog.value = "Root access granted.";
+    } else {
+      // Rotation des inputs cassés pour la nouvelle version
+      rotateBrokenMethod();
 
-// --- LOGIQUE ASSISTANT ---
+      // Incrémentation version/édition
+      editionIndex.value++;
+      if (editionIndex.value >= EDITIONS.length) {
+        editionIndex.value = 0;
+        windowsVersion.value++;
+      }
 
-const triggerAssistant = () => {
-  showAssistant.value = true;
-  // L'assistant ne bloque pas totalement, mais cache le champ
-};
-
-const closeAssistant = () => {
-  showAssistant.value = false;
-  // Pénalité : fermer l'assistant déclenche parfois une mise à jour
-  if (Math.random() > 0.7) {
-    setTimeout(triggerFakeUpdate, 500);
-  }
+      alert(`Mise à jour réussie : Windows ${windowsVersion.value} ${currentEdition.value.name}`);
+      inputValue.value = "";
+      lastLog.value = "[SYSTEM] Drivers updated. Input methods reconfigured.";
+    }
+  }, 1000);
 };
 
 const acceptBing = () => {
-  alert("Ouverture de Edge... (C'est une blague, continuez à souffrir)");
-  closeAssistant();
-};
-
-const submitForm = () => {
-  alert("Bravo ! Vous avez vaincu l'obsolescence programmée. Linux installé.");
-  window.location.reload();
+  window.open('https://www.bing.com/search?q=acheter+licence+windows+pas+cher', '_blank');
+  showBingPopup.value = false;
 };
 </script>
 
 <style scoped>
-/* --- STYLE DE BASE (LINUX / ÉCO) --- */
-@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Segoe+UI:wght@300;400;600&display=swap');
-
-.linux-container {
-  background-color: #1e1e1e;
-  color: #00ff00; /* Vert Terminal */
-  font-family: 'Fira Code', monospace;
+/* --- THEMES --- */
+.main-container {
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  padding: 2rem;
-  box-sizing: border-box;
-  position: relative;
-  overflow: hidden;
-}
-
-.terminal-header {
-  display: flex;
-  background: #333;
-  padding: 10px;
-  border-radius: 8px 8px 0 0;
-  align-items: center;
-}
-
-.traffic-lights span {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  display: inline-block;
-  margin-right: 6px;
-}
-.red { background: #ff5f56; }
-.yellow { background: #ffbd2e; }
-.green { background: #27c93f; }
-
-.title {
-  margin-left: 15px;
-  color: #ccc;
-  font-size: 0.9rem;
-}
-
-.terminal-body {
-  border: 1px solid #333;
-  border-top: none;
-  padding: 2rem;
-  flex-grow: 1;
-  background: rgba(0, 0, 0, 0.9);
-}
-
-.prompt { color: #27c93f; font-weight: bold; margin-right: 10px; }
-
-.input-group {
-  margin-top: 50px;
-  display: flex;
-  flex-direction: column;
-  max-width: 500px;
-}
-
-label {
-  margin-bottom: 10px;
-  color: #aaa;
-}
-
-.input-wrapper {
-  display: flex;
-  align-items: center;
-  border-bottom: 2px solid #00ff00;
-}
-
-input {
-  background: transparent;
-  border: none;
-  color: white;
   font-family: 'Fira Code', monospace;
-  font-size: 1.5rem;
-  width: 100%;
-  outline: none;
+  transition: all 1s ease;
+  display: flex; flex-direction: column;
 }
 
-.cursor {
-  animation: blink 1s step-end infinite;
-  font-size: 1.5rem;
+.theme-windows { background-color: #1e1e1e; color: #00ff00; }
+.theme-windows .terminal-header { background: #333; }
+.theme-windows .btn-primary { background: #0078D7; color: white; }
+
+.theme-linux { background-color: #0d1117; color: #58a6ff; }
+.theme-linux .terminal-header { background: #161b22; border-bottom: 1px solid #30363d; }
+.theme-linux .input-wrapper { border-color: #58a6ff; }
+.theme-linux .action-btn { background: #238636; color: white; }
+
+/* --- TERMINAL UI --- */
+.terminal-header { padding: 10px; display: flex; align-items: center; }
+.traffic-lights span { width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+.red { background: #ff5f56; } .yellow { background: #ffbd2e; } .green { background: #27c93f; }
+.title { margin-left: 15px; font-size: 0.9rem; opacity: 0.7; }
+.terminal-body { padding: 2rem; flex: 1; position: relative; }
+.prompt { color: #27c93f; margin-right: 10px; }
+.input-group { margin-top: 40px; max-width: 600px; }
+.input-wrapper { display: flex; align-items: center; border-bottom: 2px solid #00ff00; transition: border-color 0.5s; }
+input { background: transparent; border: none; color: inherit; font-family: inherit; font-size: 1.5rem; width: 100%; outline: none; }
+.cursor { animation: blink 1s step-end infinite; font-size: 1.5rem; }
+.action-btn { margin-top: 30px; background: #00ff00; color: black; border: none; padding: 12px 24px; font-weight: bold; cursor: pointer; font-size: 1rem; }
+.warning-text { color: #ff9800; }
+.success-text { color: #2ea043; font-weight: bold; }
+.status-log { margin-top: 15px; color: #666; font-style: italic; font-size: 0.85rem; }
+
+/* --- OVERLAYS FULLSCREEN --- */
+.fullscreen-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  color: white; font-family: 'Segoe UI', sans-serif;
+  text-align: center;
 }
 
-.status-log {
-  margin-top: 20px;
-  font-size: 0.8rem;
-  color: #666;
-  font-style: italic;
-}
+.bsod-bg { background-color: #0078D7; align-items: flex-start; padding: 0 15%; text-align: left; }
+.windows-blue-bg { background-color: #0078D7; }
+.linux-install-bg { background-color: #222; font-family: 'Fira Code', monospace; color: #00ff00; }
 
-.btn-linux {
-  margin-top: 30px;
-  background: #00ff00;
-  color: black;
-  border: none;
-  padding: 10px 20px;
-  font-family: 'Fira Code', monospace;
-  font-weight: bold;
-  cursor: pointer;
-}
+.sad-face { font-size: 8rem; margin-bottom: 20px; }
+.qr-section { display: flex; gap: 20px; margin-top: 30px; align-items: center; }
+.qr-placeholder { width: 80px; height: 80px; background: white; color: #0078D7; display: flex; align-items: center; justify-content: center; font-weight: bold; }
 
+.loader-ring { width: 40px; height: 40px; border: 4px solid #fff; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px; }
+.progress-bar-wrapper { width: 300px; height: 6px; background: rgba(255,255,255,0.2); margin-top: 20px; border-radius: 3px; overflow: hidden; }
+.progress-bar-fill { height: 100%; background: white; transition: width 0.2s; }
+
+/* --- MODALS --- */
+.modal-backdrop, .modal-backdrop-transparent { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 9000; display: flex; justify-content: center; align-items: center; }
+.modal-backdrop-transparent { background: rgba(0,0,0,0.1); z-index: 8500; }
+
+.windows-window { background: #f0f0f0; width: 450px; border: 1px solid #999; box-shadow: 0 20px 50px rgba(0,0,0,0.5); font-family: 'Segoe UI', sans-serif; color: black; }
+.window-header { background: white; padding: 8px 12px; display: flex; justify-content: space-between; border-bottom: 1px solid #ccc; font-size: 0.9rem; }
+.window-body { padding: 25px; text-align: center; }
+.error-window { border: 2px solid #cc0000; }
+.error-header { background: #ffcccc; color: #cc0000; }
+.upgrade-card { background: white; border: 1px solid #ddd; padding: 15px; margin: 20px 0; border-radius: 4px; text-align: left; }
+.upgrade-card h4 { color: #0078D7; margin: 0 0 5px 0; }
+.price { font-size: 1.1rem; color: #333; margin-top: 10px; }
+
+.linux-option { margin-top: 15px; padding-top: 15px; border-top: 1px solid #ccc; }
+.hint-text { font-size: 0.8rem; color: #666; margin-bottom: 5px; font-style: italic; }
+.btn-linux-install { width: 100%; background: #E95420; color: white; border: none; padding: 10px; cursor: pointer; font-weight: bold; }
+.btn-primary { width: 100%; background: #0078D7; color: white; border: none; padding: 8px; margin-top: 10px; cursor: pointer; }
+.btn-secondary { width: 100%; background: #e1e1e1; border: 1px solid #ccc; padding: 8px; margin-top: 10px; cursor: pointer; }
+.link-style { background: none; border: none; text-decoration: underline; color: #666; }
+.icon { font-size: 3rem; margin-bottom: 10px; }
+
+/* --- BING POPUP --- */
+.clippy-popup { width: 320px; background: white; border: 3px solid #0078D7; border-radius: 8px; font-family: 'Segoe UI', sans-serif; box-shadow: 0 15px 40px rgba(0,0,0,0.4); pointer-events: auto; }
+.clippy-header { background: linear-gradient(90deg, #0078D7, #00C7FD); color: white; padding: 8px 12px; font-weight: bold; display: flex; justify-content: space-between; font-size: 0.9rem; }
+.clippy-body { padding: 20px; font-size: 1rem; color: #333; line-height: 1.4; }
+.clippy-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+.btn-bing-primary { background: #0078D7; color: white; border: none; padding: 10px; font-weight: bold; cursor: pointer; transition: transform 0.2s; }
+.btn-bing-primary:hover { transform: scale(1.05); }
+.btn-bing-secondary { background: transparent; border: 1px solid #ccc; color: #666; padding: 8px; cursor: pointer; font-size: 0.8rem; }
+
+/* ANIMATIONS */
+@keyframes spin { 100% { transform: rotate(360deg); } }
 @keyframes blink { 50% { opacity: 0; } }
-
-/* --- LE STYLE GAFAM (WINDOWS UPDATE) --- */
-
-.windows-update-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: #0078D7; /* Le Bleu de la mort / MAJ */
-  color: white;
-  font-family: 'Segoe UI', sans-serif;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-  cursor: wait;
-}
-
-.windows-update-overlay h1 { font-weight: 300; font-size: 3rem; margin: 10px 0; }
-.windows-update-overlay h2 { font-weight: 400; font-size: 1.2rem; margin-top: 20px; }
-.windows-update-overlay p { font-size: 1rem; opacity: 0.8; }
-.subtext { margin-top: 40px; font-size: 0.8rem !important; opacity: 0.6; }
-
-/* Loader circulaire Windows style */
-.loader-ring {
-  display: inline-block;
-  width: 60px;
-  height: 60px;
-  margin-bottom: 20px;
-}
-.loader-ring:after {
-  content: " ";
-  display: block;
-  width: 44px;
-  height: 44px;
-  margin: 8px;
-  border-radius: 50%;
-  border: 4px solid #fff;
-  border-color: #fff transparent #fff transparent;
-  animation: ring 1.2s linear infinite;
-}
-@keyframes ring {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* --- LE STYLE POPUP ASSISTANT --- */
-.clippy-popup {
-  position: absolute;
-  bottom: 20%;
-  right: 10%;
-  width: 300px;
-  background: white;
-  border: 1px solid #ccc;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-  font-family: 'Segoe UI', sans-serif;
-  color: #333;
-  z-index: 5000;
-  border-radius: 4px;
-}
-
-.clippy-header {
-  background: #f1f1f1;
-  padding: 5px 10px;
-  display: flex;
-  justify-content: space-between;
-  border-bottom: 1px solid #ddd;
-  font-size: 0.8rem;
-}
-
-.clippy-body { padding: 15px; font-size: 0.9rem; }
-.clippy-actions { margin-top: 10px; display: flex; gap: 10px; }
-
-.clippy-actions button {
-  flex: 1;
-  padding: 5px;
-  cursor: pointer;
-  background: #0078D7;
-  color: white;
-  border: none;
-}
-.clippy-actions .btn-secondary { background: #ccc; color: #333; }
-
-/* Transitions Vue */
+.shake-animation { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+@keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
 .fade-enter-active, .fade-leave-active { transition: opacity 0.5s; }
 .fade-enter-from, .fade-leave-to { opacity: 0; }
+.bounce-enter-active { animation: bounce-in 0.5s; }
+@keyframes bounce-in { 0% { transform: scale(0); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 </style>
