@@ -179,12 +179,13 @@ onMounted(() => {
 })
 
 const wrapperStyle = computed(() => ({
-  position: 'absolute',
+  position: 'fixed',
   top: `${props.y}%`,
   left: `${props.x}%`,
   width: `${props.width}px`,
   height: `${props.height}px`,
   cursor: props.enableClick ? 'pointer' : 'default',
+  zIndex: 9998,
 }))
 
 const getSpriteStyle = (emotion: string, frame: number, opacity: number) => {
