@@ -7,6 +7,7 @@ import GameTransport from '../components/GameTransport.vue'
 import GameUsage from '../components/GameUsage.vue'
 // AJOUT FINAL
 import GameRecycling from '../components/GameRecycling.vue'
+import NavBar from '@/components/NavBar.vue'
 
 const savedLevel = localStorage.getItem('playerLevel')
 const currentLevel = ref(savedLevel ? parseInt(savedLevel) : 1)
@@ -25,8 +26,9 @@ function allerAuNiveauSuivant() {
 </script>
 
 <template>
+  <NavBar/>
   <div class="main-container">
-    
+
     <div class="nav-bar">
         <button @click="changerNiveau(1)" :class="{ active: currentLevel === 1 }">1. MINE</button>
         <button @click="changerNiveau(2)" :class="{ active: currentLevel === 2 }">2. USINE</button>
@@ -40,7 +42,7 @@ function allerAuNiveauSuivant() {
         <GameAssembly v-else-if="currentLevel === 2" @finish="allerAuNiveauSuivant" />
         <GameTransport v-else-if="currentLevel === 3" @finish="allerAuNiveauSuivant" />
         <GameUsage v-else-if="currentLevel === 4" @finish="allerAuNiveauSuivant" />
-        
+
         <GameRecycling v-else-if="currentLevel === 5" @finish="allerAuNiveauSuivant" />
     </div>
 
@@ -48,7 +50,7 @@ function allerAuNiveauSuivant() {
 </template>
 
 <style scoped>
-.main-container { background-color: #000; min-height: 100vh; }
+.main-container { background-color: #000; min-height: 100vh; padding-top: 80px;}
 .nav-bar { display: flex; justify-content: center; gap: 5px; padding: 10px; background: #222; border-bottom: 2px solid #555; flex-wrap: wrap; }
 .nav-bar button { background: #444; color: #fff; border: 1px solid #666; padding: 5px 10px; cursor: pointer; font-family: monospace; font-size: 0.8rem; }
 .nav-bar button:hover { background: #666; }
