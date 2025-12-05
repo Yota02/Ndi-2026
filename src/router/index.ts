@@ -5,6 +5,9 @@ import Sobriete from '@/views/SobrieteView.vue'
 import LasergameMenuView from '../views/LasergameMenuView.vue'
 import LasergameSurvival from '../views/LasergameSurvivalView.vue'
 import LasergameQuiz from '../views/LasergameQuizView.vue'
+import Portfolio from '../views/Portfolio.vue'
+import ChapterPage from '../views/ChapterPage.vue'
+
 
 const SESSION_KEY = 'trailer_seen'
 
@@ -41,6 +44,21 @@ const router = createRouter({
       name: 'quiz',
       component: LasergameQuiz
     }
+    },
+    {
+      path: '/portfolio',
+      name: 'portfolio',
+      component: Portfolio
+    },
+    { path: '/chapter/:id',
+      name: 'chapter',
+      component: ChapterPage 
+    }
+
+
+
+
+
   ]
 })
 
