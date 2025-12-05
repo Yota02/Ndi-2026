@@ -17,7 +17,7 @@ const cinematicSentences: { text: string; image: string | null }[] = [
   },
   {
     text: "La banquise fond sous le poids de nos clics et du matériel jugé trop vite obsolète.",
-    image: "/trailer/banquise.jpg"
+    image: "Ndi-2026/trailer/banquise.jpg"
   },
   {
     text: "Mais vous suivrez les aventures de Tuxy le pingouin dans ces péripéties.",
@@ -25,7 +25,7 @@ const cinematicSentences: { text: string; image: string | null }[] = [
   },
   {
     text: "Ensemble, nous reprendrons le contrôle pour offrir un avenir respirable à notre planète.",
-    image: "/trailer/mondeMeilleur.jpg"
+    image: "Ndi-2026/trailer/mondeMeilleur.jpg"
   },
   {
     text: "Vous découvrirez la voie du NIRD : un Numérique Inclusif, Responsable et Durable.",
@@ -33,7 +33,7 @@ const cinematicSentences: { text: string; image: string | null }[] = [
   },
   {
     text: "Vous y trouverez les clés pour comprendre, partager et reprendre le pouvoir.",
-    image: "/trailer/clesDuMonde.jpg"
+    image: "Ndi-2026/trailer/clesDuMonde.jpg"
   },
   {
     text: "Votre résistance commencera ici : êtes-vous prêts ?",
