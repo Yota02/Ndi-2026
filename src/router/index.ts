@@ -53,7 +53,7 @@ const router = createRouter({
     { path: '/chapter/:id',
       name: 'chapter',
       component: ChapterPage
-    {
+    },  {
       path: '/contact',
       name: 'contact',
       component: ContactView
