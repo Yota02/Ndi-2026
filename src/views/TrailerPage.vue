@@ -3,10 +3,15 @@ import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import FadeText from '@/components/trailer/FadeText.vue';
 
+// Import des images
+import banquiseImg from '@/assets/trailer/banquise.jpg';
+import mondeMeilleurImg from '@/assets/trailer/mondeMeilleur.jpg';
+import clesDuMondeImg from '@/assets/trailer/clesDuMonde.jpg';
+
 const router = useRouter();
 
 // ==========================================
-// CONFIGURATION - Les images sont dans /public/trailer/
+// CONFIGURATION
 // ==========================================
 const introText = "Bienvenue dans l'expérience.";
 
@@ -17,7 +22,7 @@ const cinematicSentences: { text: string; image: string | null }[] = [
   },
   {
     text: "La banquise fond sous le poids de nos clics et du matériel jugé trop vite obsolète.",
-    image: "Ndi-2026/trailer/banquise.jpg"
+    image: banquiseImg
   },
   {
     text: "Mais vous suivrez les aventures de Tuxy le pingouin dans ces péripéties.",
@@ -25,7 +30,7 @@ const cinematicSentences: { text: string; image: string | null }[] = [
   },
   {
     text: "Ensemble, nous reprendrons le contrôle pour offrir un avenir respirable à notre planète.",
-    image: "Ndi-2026/trailer/mondeMeilleur.jpg"
+    image: mondeMeilleurImg
   },
   {
     text: "Vous découvrirez la voie du NIRD : un Numérique Inclusif, Responsable et Durable.",
@@ -33,7 +38,7 @@ const cinematicSentences: { text: string; image: string | null }[] = [
   },
   {
     text: "Vous y trouverez les clés pour comprendre, partager et reprendre le pouvoir.",
-    image: "Ndi-2026/trailer/clesDuMonde.jpg"
+    image: clesDuMondeImg
   },
   {
     text: "Votre résistance commencera ici : êtes-vous prêts ?",
