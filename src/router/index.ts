@@ -1,29 +1,58 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import PhoneGameView from '../views/PhoneGameView.vue'
+import { createRouter, createWebHashHistory } from 'vue-router'
+import TrailerPage from '../views/TrailerPage.vue'
+import HomePage from '../views/HomeView.vue'
+import Sobriete from '@/views/SobrieteView.vue'
+import LasergameMenuView from '../views/LasergameMenuView.vue'
+import LasergameSurvival from '../views/LasergameSurvivalView.vue'
+import LasergameQuiz from '../views/LasergameQuizView.vue'
+
+const SESSION_KEY = 'trailer_seen'
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
+      name: 'trailer',
+      component: TrailerPage
+    },
+    {
+      path: '/home',
       name: 'home',
-      component: HomeView,
+      component: HomePage
     },
     {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue'),
+      path: '/sobriete-numerique',
+      name: 'sobriete-numerique',
+      component: Sobriete,
     },
     {
-      path: '/game',            // C'est l'adresse URL
-      name: 'game',
-      component: PhoneGameView  // C'est le fichier qu'on affiche
+      path: '/laser-game',
+      name: 'laser-game',
+      component: LasergameMenuView
+    },
+    {
+      path: '/laser-game/survival',
+      name: 'survival',
+      component: LasergameSurvival
+    },
+    {
+      path: '/laser-game/quiz',
+      name: 'quiz',
+      component: LasergameQuiz
     }
-  ],
+  ]
+})
+
+router.beforeEach((to) => {
+  // Si on va sur le trailer et qu'il a déjà été vu, rediriger vers /home
+  if (to.name === 'trailer') {
+    const trailerSeen = sessionStorage.getItem(SESSION_KEY)
+    if (trailerSeen) {
+      return { name: 'home' }
+    }
+  }
+  // Pas de return = navigation continue normalement
 })
 
 export default router
