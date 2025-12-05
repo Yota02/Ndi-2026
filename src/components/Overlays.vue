@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="adQueue.length > 0" class="adware-layer-scattered">
+    <div v-if="!overlayState.isLinux && adQueue.length > 0" class="adware-layer-scattered">
       <div
         v-for="(adText, index) in adQueue"
         :key="index"
@@ -50,7 +50,7 @@
               <button @click="$emit('close-bing')">×</button>
             </div>
             <div class="clippy-body">
-              <p>Je remarque que vous écrivez un mot de passe !</p>
+              <p>Je remarque que vous écrivez: "<strong>{{ bingContextValue }}</strong>".</p>
               <p>L'édition Entreprise inclut l'optimisation neurale de vos pensées.</p>
               <div class="clippy-actions">
                 <button @click="$emit('accept-bing')" class="btn-bing-primary">Oui (Générer)</button>
@@ -85,7 +85,7 @@
           <div class="window-body">
             <div class="icon">🔒</div>
             <h3>Accès Bloqué !</h3>
-            <p>Votre licence Windows n'est pas à jour. Vous ne pouvez pas vous connecter tant que vous n'avez pas procédé à la mise à niveau suivante :</p>
+            <p>Votre licence Windows n'est pas à jour. Vous ne pouvez pas soumettre de requête tant que vous n'avez pas procédé à la mise à niveau suivante :</p>
             <div class="upgrade-card">
               <h4>Passer à : Windows {{ nextWindowsVersion }} {{ nextEditionName }}</h4>
               <p>Inclus : {{ nextFeature }}</p>
@@ -130,6 +130,7 @@ const props = defineProps({
   nextPrice: String,
   nextFeature: String,
   canInstallLinux: Boolean,
+  bingContextValue: String, // NOUVEAU: pour afficher l'email dans le popup Bing
 });
 
 defineEmits([
@@ -145,10 +146,8 @@ const overlayClass = computed(() => {
 
 // Génère un style aléatoire (position) pour chaque popup Adware
 const getRandomAdStyle = (index) => {
-  // Si index > 0, l'ad n'est pas visible (v-show), mais nous devons maintenir la position dans la liste
   if (index > 0) return {};
 
-  // Logique de positionnement aléatoire (utilisée uniquement pour le premier élément affiché)
   const isTop = Math.random() > 0.5;
   const isLeft = Math.random() > 0.5;
 

@@ -1,20 +1,25 @@
 <template>
   <div class="main-container login-background" :class="{ 'theme-linux': isLinuxInstalled, 'theme-windows': !isLinuxInstalled }">
 
-    <ContactPage
-      :isLinuxInstalled="isLinuxInstalled"
-      :windowsVersion="windowsVersion"
-      :currentEdition="currentEdition"
-      :brokenMethod="brokenMethod"
-      :inputValue="inputValue"
-      :lastLog="lastLog"
-      :isSystemBusy="isSystemBusy"
-      :currentTime="currentTime"
-      @update:inputValue="inputValue = $event"
-      @input-change="handleInput"
-      @action-trigger="handleAction"
-      @start-session="isLinuxInstalled = false"
-    />
+    <transition name="interface-fade" mode="out-in">
+      <ContactPage
+        :key="isLinuxInstalled"
+        :isLinuxInstalled="isLinuxInstalled"
+        :windowsVersion="windowsVersion"
+        :currentEdition="currentEdition"
+        :brokenMethod="brokenMethod"
+        :inputValue="inputValue"
+        :emailValue="emailValue"
+        :lastLog="lastLog"
+        :isSystemBusy="isSystemBusy"
+        :currentTime="currentTime"
+        @update:inputValue="inputValue = $event"
+        @update:emailValue="emailValue = $event"
+        @trigger-frustration="triggerFrustration"
+        @action-trigger="handleAction"
+        @start-session="isLinuxInstalled = false"
+      />
+    </transition>
 
     <div class="system-bar" v-if="!isLinuxInstalled">
       <div class="debug-area">
@@ -45,6 +50,7 @@
       :nextPrice="nextPrice"
       :nextFeature="nextFeature"
       :canInstallLinux="canInstallLinux"
+      :bingContextValue="emailValue"
       @close-bing="showBingPopup = false"
       @accept-bing="acceptBing"
       @close-error="showErrorModal = false"
@@ -83,6 +89,7 @@ const brokenMethod = ref('CLICK');
 const currentTime = ref(new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }));
 
 const inputValue = ref('');
+const emailValue = ref(''); // NOUVEAU: Champ Email
 const keyPressCount = ref(0);
 const lastLog = ref('');
 
@@ -114,7 +121,7 @@ const nextWindowsVersion = computed(() => isEndOfCycle.value ? windowsVersion.va
 const nextEditionName = computed(() => EDITIONS[nextEditionIndex.value].name);
 const nextPrice = computed(() => EDITIONS[nextEditionIndex.value].price);
 const nextFeature = computed(() => EDITIONS[nextEditionIndex.value].feature);
-const canInstallLinux = computed(() => isEndOfCycle.value);
+const canInstallLinux = computed(() => true);
 const isSystemBusy = computed(() => overlayState.active || showPaywall.value || showErrorModal.value || showBingPopup.value);
 
 
@@ -128,8 +135,8 @@ const rotateBrokenMethod = () => {
   console.log(`[SYSTEM] New Input Config: ${brokenMethod.value} broken.`);
 };
 
-// Logique pour l'input Windows
-const handleInput = () => {
+// Logique de Frustration (Déclenchée par les deux inputs)
+const triggerFrustration = () => {
   keyPressCount.value++;
 
   let aiThreshold = 1.0;
@@ -145,7 +152,7 @@ const handleInput = () => {
   }
 };
 
-// Logique pour l'action de connexion
+// Logique pour l'action de soumission
 const handleAction = (method) => {
   if (method === brokenMethod.value) {
     errorModalText.value = method === 'ENTER'
@@ -271,7 +278,9 @@ const finishInstall = (isLinux) => {
         windowsVersion.value++;
       }
       alert(`Activation réussie pour Windows ${windowsVersion.value} ${currentEdition.value.name}. Contactez-nous.`);
+
       inputValue.value = "";
+      emailValue.value = "";
     }
   }, 1000);
 };
@@ -287,6 +296,25 @@ onMounted(() => {
 <style>
 /* CSS GLOBAL ET PARTAGÉ */
 @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Segoe+UI:wght@300;400;600;700&display=swap');
+
+/* Style de transition global pour le composant ContactPage */
+.interface-fade-enter-active,
+.interface-fade-leave-active {
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  position: absolute; /* Permet le cross-fade */
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+.interface-fade-enter-from {
+  opacity: 0;
+  transform: scale(0.95);
+}
+.interface-fade-leave-to {
+  opacity: 0;
+  transform: scale(1.05);
+}
 
 .main-container {
   min-height: 100vh;
