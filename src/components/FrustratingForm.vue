@@ -302,11 +302,6 @@ onMounted(() => {
     </transition>
 
     <div class="system-bar" v-if="!isLinuxInstalled">
-      <div class="debug-area">
-          <span style="color: #ccc; opacity: 0.5;">
-            Input: {{ brokenMethod === 'NONE' ? 'MIRACLE' : brokenMethod + ' BROKEN' }}
-          </span>
-      </div>
       <div class="status-icons">
         <span>{{ currentTime }}</span>
         <i class="icon-wifi"></i>
@@ -368,10 +363,8 @@ onMounted(() => {
 }
 
 .main-container {
-  /* CORRECTION CLÉ 1: Utiliser height: 100% (ou min-height) pour respecter la hauteur du parent. */
-  /* Le parent (Home.vue) doit gérer le 100vh ou utiliser calc(100vh - NavBarHeight). */
-  height: 100%;
-  padding-top: 5%;
+  min-height: 100vh;
+  padding-top: 80px; /* Hauteur de la NavBar */
   font-family: 'Segoe UI', Arial, sans-serif;
   transition: all 1s ease;
   display: flex;
@@ -379,6 +372,7 @@ onMounted(() => {
   position: relative;
   overflow: hidden;
   background-color: #111827;
+  box-sizing: border-box;
 }
 
 /* Fond Windows */
