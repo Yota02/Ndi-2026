@@ -1,75 +1,9 @@
-<template>
-  <div class="main-container login-background" :class="{ 'theme-linux': isLinuxInstalled, 'theme-windows': !isLinuxInstalled }">
-
-    <transition name="interface-fade" mode="out-in">
-      <ContactPage
-        v-if="!overlayState.active"
-        :key="isLinuxInstalled"
-        :isLinuxInstalled="isLinuxInstalled"
-        :windowsVersion="windowsVersion"
-        :currentEdition="currentEdition"
-        :brokenMethod="brokenMethod"
-        :inputValue="inputValue"
-        :emailValue="emailValue"
-        :lastLog="lastLog"
-        :isSystemBusy="isSystemBusy"
-        :currentTime="currentTime"
-        @update:inputValue="inputValue = $event"
-        @update:emailValue="emailValue = $event"
-        @trigger-frustration="triggerFrustration"
-        @action-trigger="handleAction"
-        @start-session="isLinuxInstalled = false"
-      />
-    </transition>
-
-    <div class="system-bar" v-if="!isLinuxInstalled">
-      <div class="debug-area">
-          <span style="color: #ccc; opacity: 0.5;">
-            Input: {{ brokenMethod === 'NONE' ? 'MIRACLE' : brokenMethod + ' BROKEN' }}
-          </span>
-      </div>
-      <div class="status-icons">
-        <span>{{ currentTime }}</span>
-        <i class="icon-wifi"></i>
-        <i class="icon-battery"></i>
-        <i class="icon-accessibility"></i>
-      </div>
-    </div>
-
-    <Overlays
-      :overlayState="overlayState"
-      :progress="progress"
-      :bsodErrorMsg="bsodErrorMsg"
-      :updateMessage="updateMessage"
-      :showBingPopup="showBingPopup"
-      :showErrorModal="showErrorModal"
-      :errorModalText="errorModalText"
-      :showPaywall="showPaywall"
-      :adQueue="adQueue"
-      :nextWindowsVersion="nextWindowsVersion"
-      :nextEditionName="nextEditionName"
-      :nextPrice="nextPrice"
-      :nextFeature="nextFeature"
-      :canInstallLinux="canInstallLinux"
-      :bingContextValue="emailValue"
-      @close-bing="showBingPopup = false"
-      @accept-bing="acceptBing"
-      @close-error="showErrorModal = false"
-      @close-paywall="closePaywall"
-      @buy-upgrade="buyUpgrade"
-      @install-linux="installLinux"
-      @close-ad="closeAdPopup"
-    />
-
-  </div>
-</template>
-
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onMounted, reactive } from 'vue';
 
 // Importation des composants
-import ContactPage from '../components/ContactPage.vue';
-import Overlays from '../components/Overlays.vue';
+import ContactPage from '@/components/ContactPage.vue';
+import Overlays from '@/components/Overlays.vue';
 
 // --- CONFIGURATION ---
 const EDITIONS = [
@@ -111,7 +45,6 @@ const showBingPopup = ref(false);
 const showErrorModal = ref(false);
 const errorModalText = ref('');
 const adQueue = ref([]);
-const showAdPopup = computed(() => adQueue.value.length > 0);
 
 
 // --- PROPRIÉTÉS CALCULÉES (COMPUTED) ---
@@ -295,6 +228,73 @@ onMounted(() => {
 });
 </script>
 
+<template>
+  <div class="main-container login-background" :class="{ 'theme-linux': isLinuxInstalled, 'theme-windows': !isLinuxInstalled }">
+
+    <transition name="interface-fade" mode="out-in">
+      <ContactPage
+        v-if="!overlayState.active"
+        :key="isLinuxInstalled"
+        :isLinuxInstalled="isLinuxInstalled"
+        :windowsVersion="windowsVersion"
+        :currentEdition="currentEdition"
+        :brokenMethod="brokenMethod"
+        :inputValue="inputValue"
+        :emailValue="emailValue"
+        :lastLog="lastLog"
+        :isSystemBusy="isSystemBusy"
+        :currentTime="currentTime"
+        @update:inputValue="inputValue = $event"
+        @update:emailValue="emailValue = $event"
+        @trigger-frustration="triggerFrustration"
+        @action-trigger="handleAction"
+        @start-session="isLinuxInstalled = false"
+      />
+    </transition>
+
+    <div class="system-bar" v-if="!isLinuxInstalled">
+      <div class="debug-area">
+          <span style="color: #ccc; opacity: 0.5;">
+            Input: {{ brokenMethod === 'NONE' ? 'MIRACLE' : brokenMethod + ' BROKEN' }}
+          </span>
+      </div>
+      <div class="status-icons">
+        <span>{{ currentTime }}</span>
+        <i class="icon-wifi"></i>
+        <i class="icon-battery"></i>
+        <i class="icon-accessibility"></i>
+      </div>
+    </div>
+
+    <Overlays
+      :overlayState="overlayState"
+      :progress="progress"
+      :bsodErrorMsg="bsodErrorMsg"
+      :updateMessage="updateMessage"
+      :showBingPopup="showBingPopup"
+      :showErrorModal="showErrorModal"
+      :errorModalText="errorModalText"
+      :showPaywall="showPaywall"
+      :adQueue="adQueue"
+      :nextWindowsVersion="nextWindowsVersion"
+      :nextEditionName="nextEditionName"
+      :nextPrice="nextPrice"
+      :nextFeature="nextFeature"
+      :canInstallLinux="canInstallLinux"
+      :bingContextValue="emailValue"
+      @close-bing="showBingPopup = false"
+      @accept-bing="acceptBing"
+      @close-error="showErrorModal = false"
+      @close-paywall="closePaywall"
+      @buy-upgrade="buyUpgrade"
+      @install-linux="installLinux"
+      @close-ad="closeAdPopup"
+    />
+
+  </div>
+</template>
+
+
 <style>
 /* CSS GLOBAL ET PARTAGÉ */
 @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Segoe+UI:wght@300;400;600;700&display=swap');
@@ -319,19 +319,21 @@ onMounted(() => {
 }
 
 .main-container {
-  min-height: 100vh;
+  /* CORRECTION CLÉ 1: Utiliser height: 100% (ou min-height) pour respecter la hauteur du parent. */
+  /* Le parent (Home.vue) doit gérer le 100vh ou utiliser calc(100vh - NavBarHeight). */
+  height: 100%;
+  padding-top: 5%;
   font-family: 'Segoe UI', Arial, sans-serif;
   transition: all 1s ease;
   display: flex;
   flex-direction: column;
   position: relative;
   overflow: hidden;
+  background-color: #111827;
 }
 
 /* Fond Windows */
 .login-background {
-  background-color: #0078D7;
-  background-image: linear-gradient(180deg, rgba(0, 120, 215, 0.8), rgba(0, 50, 100, 0.8));
   color: white;
   text-align: center;
 }
@@ -350,8 +352,9 @@ onMounted(() => {
 
 /* Z-index ajusté: Modals bloquants (Paywall/Error) très hauts */
 .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 9500; display: flex; justify-content: center; align-items: center; }
-/* Bing/Copilot (NON bloquant) doit s'afficher clairement au-dessus du formulaire */
-.modal-backdrop-transparent { position: fixed; inset: 0; background: rgba(0,0,0,0.1); z-index: 9000; display: flex; justify-content: center; align-items: center; }
+
+/* CORRECTION CLÉ 2: Abaisser le z-index de Copilot */
+.modal-backdrop-transparent { position: fixed; inset: 0; background: rgba(0,0,0,0.1); z-index: 90; /* Doit être inférieur à 100 (NavBar) */ display: flex; justify-content: center; align-items: center; }
 
 .windows-window { background: #f0f0f0; width: 450px; border: 1px solid #999; box-shadow: 0 20px 50px rgba(0,0,0,0.5); font-family: 'Segoe UI', sans-serif; color: black; border-radius: 8px; }
 .window-header { background: white; padding: 8px 12px; display: flex; justify-content: space-between; border-bottom: 1px solid #ccc; font-size: 0.9rem; border-top-left-radius: 8px; border-top-right-radius: 8px; }
@@ -380,15 +383,15 @@ onMounted(() => {
 .bounce-enter-active { animation: bounce-in 0.5s; }
 @keyframes bounce-in { 0% { transform: scale(0); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 
-/* CSS dans ContactPage doit être mis à jour pour le z-index dans le fichier de base Frustrating.vue */
+/* CSS dans ContactPage doit être mis à jour pour le z-index dans le fichier de base FrustratingForm.vue */
 .login-container {
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
   padding-bottom: 80px;
-  /* Le formulaire est bien au-dessus de l'arrière-plan */
+  /* CORRECTION CLÉ 3: Abaisser le z-index du formulaire lui-même */
   position: relative;
-  z-index: 100;
+  z-index: 10;
 }
 </style>

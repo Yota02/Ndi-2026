@@ -43,7 +43,9 @@
           </div>
 
           <div v-else class="update-content">
-            <div :class="{'loader-ring': !overlayState.isLinux}"></div> <h2>{{ updateMessage }}</h2>
+            <div :class="{'loader-ring': !overlayState.isLinux}"></div>
+
+            <h2>{{ updateMessage }}</h2>
 
             <div class="progress-bar-wrapper">
               <div class="progress-bar-fill" :class="{'linux-bar': overlayState.isLinux}" :style="{ width: progress + '%' }"></div>
@@ -170,7 +172,8 @@ const getRandomAdStyle = (index) => {
     bottom: !isTop ? `${Math.random() * 20 + 5}%` : 'auto',
     left: isLeft ? `${Math.random() * 20 + 5}%` : 'auto',
     right: !isLeft ? `${Math.random() * 20 + 5}%` : 'auto',
-    zIndex: 9250 // Doit être au-dessus de tout sauf des modals bloquants
+    // Z-index ajusté
+    zIndex: 95
   };
 };
 
@@ -189,7 +192,7 @@ const getAdIcon = (adText) => {
 .adware-layer-scattered {
   position: fixed;
   inset: 0;
-  z-index: 9200; /* Au-dessus de Copilot (9000) */
+  z-index: 90; /* Abaissé pour être sous la NavBar (100) */
   pointer-events: none;
 }
 .ad-banner-scattered {
@@ -203,7 +206,7 @@ const getAdIcon = (adText) => {
   max-width: 90%;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   pointer-events: auto;
-  z-index: 9250;
+  z-index: 95; /* Abaissé pour être sous la NavBar (100) */
   background: white;
   border-radius: 8px;
   overflow: hidden;

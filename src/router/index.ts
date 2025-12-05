@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import TrailerPage from '../views/TrailerPage.vue'
 import HomePage from '../views/HomeView.vue'
-import FrustratingForm from '@/components/FrustratingForm.vue'
+import ContactView from '@/views/ContactView.vue'
 
 const SESSION_KEY = 'trailer_seen'
 
@@ -21,7 +21,7 @@ const router = createRouter({
     {
       path: '/contact',
       name: 'contact',
-      component: FrustratingForm
+      component: ContactView
     }
   ]
 })
