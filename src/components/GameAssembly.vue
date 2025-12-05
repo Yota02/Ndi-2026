@@ -302,10 +302,10 @@ onUnmounted(() => { cancelAnimationFrame(animationId); })
 .phone-case { width: 900px; height: 491px; background-size: contain; background-repeat: no-repeat; background-position: center; position: relative; box-shadow: 15px 15px 0 rgba(0,0,0,0.5); transition: transform 0.2s; image-rendering: pixelated; }
 .phone-case:hover { transform: scale(1.01); }
 .installed-part { position: absolute; transform: translate(-50%, -50%); }
-.installed-part.cpu { top: 33%; left: 50%; width: 130px; height: 70px; z-index: 2; }
-.installed-img { width: 100%; height: 100%; display: block; }
-.installed-part.battery { top: 58%; left: 50%; width: 460px; height: 196px; z-index: 2; }
-.installed-part.screen { top: 50%; left: 50%; width: 600px; height: 330px; z-index: 10; }
+.installed-part.cpu { top: 26%; left: 50%; width: 250px; height: 135px; z-index: 2; }
+.installed-img { width: 100%; height: 100%; display: block; object-fit: contain; }
+.installed-part.battery { top: calc(55% + 20px); left: 50%; width: 600px; height: 250px; z-index: 2; }
+.installed-part.screen { top: 50%; left: 50%; width: 850px; height: 465px; z-index: 10; }
 
 .result-zone { display: flex; flex-direction: column; align-items: center; margin-top: 50px; z-index: 100; }
 .big-data-box { width: 80%; max-width: 500px; display: flex; flex-direction: column; gap: 10px; padding: 20px; background: rgba(0,0,0,0.9); }
