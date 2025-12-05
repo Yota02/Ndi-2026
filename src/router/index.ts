@@ -48,6 +48,7 @@ const router = createRouter({
       name: 'contact',
       component: ContactView
      },
+    {
       path: '/phone-game',
       name: 'phone-game',
       component: PhoneGameView
