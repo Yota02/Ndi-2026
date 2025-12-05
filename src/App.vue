@@ -1,43 +1,34 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
 import ChatBot from '@/components/ChatBot.vue'
-import { ref, onMounted, onUnmounted } from 'vue'
-import SpriteAnimation from './components/TuxAnimation.vue'
+import { ref } from 'vue'
+import SpriteAnimation from '@/components/TuxAnimation.vue'
 
-const currentEmotion = ref('happy')
+const tuxRef = ref()
 
-const handleScroll = () => {
-  if (window.scrollY > 500) {
-    currentEmotion.value = 'sad'
-  } else {
-    currentEmotion.value = 'happy'
-  }
-}
-
-onMounted(() => {
-  window.addEventListener('scroll', handleScroll)
-})
-
-onUnmounted(() => {
-  window.removeEventListener('scroll', handleScroll)
-})
 </script>
 
 <template>
-  <RouterView />
-  <ChatBot/>
-  <SpriteAnimation
-    :x="100"
-    :y="100"
-    :width="300"
-    :height="300"
-    :emotion="currentEmotion"
-    :hoverEmotion="'happy'"
-  />
+  <div>
+    <RouterView />
+    <ChatBot />
+    <SpriteAnimation
+      ref="tuxRef"
+      :x="100"
+      :y="100"
+      :width="300"
+      :height="300"
+      :emotion="'happy'"
+      :hoverEmotion="'happy'"
+      :clickEmotion="'clinOeil'"
+      :enableHover="true"
+      :enableClick="true"
+      :resetOnMouseLeave="true"
+    />
+  </div>
 </template>
 
 <style>
-/* Reset global */
 * {
   margin: 0;
   padding: 0;

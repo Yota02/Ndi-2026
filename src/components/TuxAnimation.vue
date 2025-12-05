@@ -3,7 +3,8 @@
     class="sprite-wrapper"
     :style="wrapperStyle"
     @mouseenter="onMouseEnter"
-    @click="resetEmotion"
+    @mouseleave="onMouseLeave"
+    @click="onClick"
   >
     <!-- Layer 1 -->
     <div class="sprite-container layer-1" :style="layer1Style"></div>
@@ -64,34 +65,37 @@ const props = defineProps({
     type: Number,
     default: 500,
   },
-  transitionDuration: {
-    type: Number,
-    default: 400,
-  },
   waitForCycleEnd: {
     type: Boolean,
-    default: true, // Si true, attend la fin du cycle avant de changer
+    default: false,
   },
   hoverEmotion: {
     type: String,
     default: 'happy',
-    validator: (value: string) =>
-      [
-        'happy',
-        'sad',
-        'angry',
-        'surprised',
-        'leveMain',
-        'sad2',
-        'clinOeil',
-        'parleSad',
-        'normal',
-      ].includes(value),
+  },
+  clickEmotion: {
+    type: String,
+    default: null,
+  },
+  enableHover: {
+    type: Boolean,
+    default: true,
+  },
+  enableClick: {
+    type: Boolean,
+    default: false,
+  },
+  resetOnMouseLeave: {
+    type: Boolean,
+    default: false,
   },
 })
 
+const emit = defineEmits(['emotionChange', 'click', 'hover'])
+
 // États des deux layers
 const currentEmotion = ref(props.emotion)
+const baseEmotion = ref(props.emotion) // Émotion de base pour le reset
 const layer1Emotion = ref(currentEmotion.value)
 const layer1Frame = ref(0)
 const layer1Opacity = ref(1)
@@ -100,8 +104,8 @@ const layer2Emotion = ref(currentEmotion.value)
 const layer2Frame = ref(0)
 const layer2Opacity = ref(0)
 
-const activeLayer = ref(1) // 1 ou 2
-const pendingEmotion = ref<string | null>(null) // Émotion en attente
+const activeLayer = ref(1)
+const pendingEmotion = ref<string | null>(null)
 let intervalId: number | null = null
 const imagesPreloaded = ref(false)
 
@@ -124,6 +128,38 @@ const emotionFrames: Record<string, number> = {
   parleSad: 2,
   normal: 4,
 }
+
+// Méthode publique pour changer l'émotion depuis l'extérieur
+const setEmotion = (newEmotion: string) => {
+  if (emotionImages[newEmotion]) {
+    currentEmotion.value = newEmotion
+    baseEmotion.value = newEmotion
+    emit('emotionChange', newEmotion)
+  }
+}
+
+// Méthode pour changer temporairement l'émotion (sans modifier baseEmotion)
+const setTemporaryEmotion = (newEmotion: string) => {
+  if (emotionImages[newEmotion]) {
+    currentEmotion.value = newEmotion
+    emit('emotionChange', newEmotion)
+  }
+}
+
+// Méthode pour revenir à l'émotion de base
+const resetToBase = () => {
+  currentEmotion.value = baseEmotion.value
+  emit('emotionChange', baseEmotion.value)
+}
+
+// Exposer les méthodes pour utilisation avec ref
+defineExpose({
+  setEmotion,
+  setTemporaryEmotion,
+  resetToBase,
+  getCurrentEmotion: () => currentEmotion.value,
+  getBaseEmotion: () => baseEmotion.value,
+})
 
 // Préchargement des images
 onMounted(() => {
@@ -148,6 +184,7 @@ const wrapperStyle = computed(() => ({
   left: `${props.x}px`,
   width: `${props.width}px`,
   height: `${props.height}px`,
+  cursor: props.enableClick ? 'pointer' : 'default',
 }))
 
 const getSpriteStyle = (emotion: string, frame: number, opacity: number) => {
@@ -184,7 +221,6 @@ const startAnimation = () => {
       const nextFrame = (layer1Frame.value + 1) % totalFrames
       layer1Frame.value = nextFrame
 
-      // Si on revient à la frame 0 et qu'il y a une émotion en attente, on fait la transition
       if (nextFrame === 0 && pendingEmotion.value) {
         transitionToEmotion(pendingEmotion.value)
         pendingEmotion.value = null
@@ -194,7 +230,6 @@ const startAnimation = () => {
       const nextFrame = (layer2Frame.value + 1) % totalFrames
       layer2Frame.value = nextFrame
 
-      // Si on revient à la frame 0 et qu'il y a une émotion en attente, on fait la transition
       if (nextFrame === 0 && pendingEmotion.value) {
         transitionToEmotion(pendingEmotion.value)
         pendingEmotion.value = null
@@ -204,38 +239,42 @@ const startAnimation = () => {
 }
 
 const transitionToEmotion = (newEmotion: string) => {
-  // Préparer le layer inactif avec la nouvelle émotion
   if (activeLayer.value === 1) {
-    // Layer 2 devient actif
     layer2Emotion.value = newEmotion
     layer2Frame.value = 0
-
-    // Crossfade
-    layer2Opacity.value = 1
+    // Changement instantané
     layer1Opacity.value = 0
-
+    layer2Opacity.value = 1
     activeLayer.value = 2
   } else {
-    // Layer 1 devient actif
     layer1Emotion.value = newEmotion
     layer1Frame.value = 0
-
-    // Crossfade
-    layer1Opacity.value = 1
+    // Changement instantané
     layer2Opacity.value = 0
-
+    layer1Opacity.value = 1
     activeLayer.value = 1
   }
 }
 
 const onMouseEnter = () => {
-  currentEmotion.value = props.hoverEmotion
-  transitionToEmotion(currentEmotion.value)
+  if (props.enableHover) {
+    setTemporaryEmotion(props.hoverEmotion)
+    emit('hover', true)
+  }
 }
 
-const resetEmotion = () => {
-  currentEmotion.value = 'normal'
-  transitionToEmotion(currentEmotion.value)
+const onMouseLeave = () => {
+  if (props.enableHover && props.resetOnMouseLeave) {
+    resetToBase()
+    emit('hover', false)
+  }
+}
+
+const onClick = () => {
+  if (props.enableClick && props.clickEmotion) {
+    setEmotion(props.clickEmotion)
+  }
+  emit('click')
 }
 
 // Gestion du changement d'émotion avec double buffering
@@ -248,12 +287,18 @@ watch(
     if (newEmotion === currentEmotionValue) return
 
     if (props.waitForCycleEnd) {
-      // Mettre l'émotion en attente, elle sera appliquée à la fin du cycle actuel
       pendingEmotion.value = newEmotion
     } else {
-      // Transition immédiate
       transitionToEmotion(newEmotion)
     }
+  },
+)
+
+// Watch prop emotion pour synchroniser
+watch(
+  () => props.emotion,
+  (newEmotion) => {
+    setEmotion(newEmotion)
   },
 )
 
