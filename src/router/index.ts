@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import TrailerPage from '../views/TrailerPage.vue'
 import HomePage from '../views/HomeView.vue'
+import Sobriete from '@/views/SobrieteView.vue'
 import LasergameMenuView from '../views/LasergameMenuView.vue'
 import LasergameSurvival from '../views/LasergameSurvivalView.vue'
 import LasergameQuiz from '../views/LasergameQuizView.vue'
@@ -19,6 +20,11 @@ const router = createRouter({
       path: '/home',
       name: 'home',
       component: HomePage
+    },
+    {
+      path: '/sobriete-numerique',
+      name: 'sobriete-numerique',
+      component: Sobriete,
     },
     {
       path: '/laser-game',
