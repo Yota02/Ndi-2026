@@ -125,7 +125,7 @@ const sendMessage = async (event: any) => {
   // ---------------------------------
 
   try {
-    const response = await axios.post<FlaskResponse>('http://backend-ndi.cluster-ig3.igpolytech.fr/api/chat', {
+    const response = await axios.post<FlaskResponse>('https://backend-ndi.cluster-ig3.igpolytech.fr/api/chat', {
       history: conversationHistory,
       roomId: roomId
     })
