@@ -27,7 +27,7 @@ import { RouterLink } from 'vue-router';
   left: 0;
   width: 100%;
   z-index: 100;
-  background: transparent;
+  background-color: black;
 }
 
 .navbar-container {

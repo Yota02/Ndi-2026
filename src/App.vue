@@ -1,15 +1,34 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
 import ChatBot from '@/components/ChatBot.vue'
+import { ref } from 'vue'
+import SpriteAnimation from '@/components/TuxAnimation.vue'
+
+const tuxRef = ref()
+
 </script>
 
 <template>
-  <RouterView />
-  <ChatBot/>
+  <div>
+    <RouterView />
+    <ChatBot />
+    <SpriteAnimation
+      ref="tuxRef"
+      :x="10"
+      :y="65"
+      :width="300"
+      :height="300"
+      :emotion="'happy'"
+      :hoverEmotion="'happy'"
+      :clickEmotion="'clinOeil'"
+      :enableHover="true"
+      :enableClick="true"
+      :resetOnMouseLeave="true"
+    />
+  </div>
 </template>
 
 <style>
-/* Reset global */
 * {
   margin: 0;
   padding: 0;
