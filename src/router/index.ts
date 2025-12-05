@@ -1,23 +1,34 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import TrailerPage from '../views/TrailerPage.vue'
+import HomePage from '../views/HomeView.vue'
+
+const SESSION_KEY = 'trailer_seen'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: HomeView,
+      name: 'trailer',
+      component: TrailerPage
     },
     {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue'),
-    },
-  ],
+      path: '/home',
+      name: 'home',
+      component: HomePage
+    }
+  ]
+})
+
+router.beforeEach((to) => {
+  // Si on va sur le trailer et qu'il a déjà été vu, rediriger vers /home
+  if (to.name === 'trailer') {
+    const trailerSeen = sessionStorage.getItem(SESSION_KEY)
+    if (trailerSeen) {
+      return { name: 'home' }
+    }
+  }
+  // Pas de return = navigation continue normalement
 })
 
 export default router
