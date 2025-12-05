@@ -14,8 +14,8 @@ const tuxRef = ref()
     <ChatBot />
     <SpriteAnimation
       ref="tuxRef"
-      :x="100"
-      :y="100"
+      :x="10"
+      :y="65"
       :width="300"
       :height="300"
       :emotion="'happy'"

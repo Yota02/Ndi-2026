@@ -180,8 +180,8 @@ onMounted(() => {
 
 const wrapperStyle = computed(() => ({
   position: 'absolute',
-  top: `${props.y}px`,
-  left: `${props.x}px`,
+  top: `${props.y}%`,
+  left: `${props.x}%`,
   width: `${props.width}px`,
   height: `${props.height}px`,
   cursor: props.enableClick ? 'pointer' : 'default',
