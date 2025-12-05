@@ -14,6 +14,7 @@ import { RouterLink } from 'vue-router';
         <li><RouterLink to="/portfolio" class="navbar-link">Portfolio</RouterLink></li>
         <li><RouterLink to="/sobriete-numerique" class="navbar-link">Sobriété numérique</RouterLink></li>
         <li><RouterLink to="/laser-game" class="navbar-link">Laser Game</RouterLink></li>
+        <li><RouterLink to="/phone-game" class="navbar-link">Cycle de vie Smartphone</RouterLink></li>
         <li><RouterLink to="/contact" class="navbar-link">Contact</RouterLink></li>
       </ul>
     </div>
