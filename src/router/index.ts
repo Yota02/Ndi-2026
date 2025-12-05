@@ -5,9 +5,9 @@ import Sobriete from '@/views/SobrieteView.vue'
 import LasergameMenuView from '../views/LasergameMenuView.vue'
 import LasergameSurvival from '../views/LasergameSurvivalView.vue'
 import LasergameQuiz from '../views/LasergameQuizView.vue'
+import LaserPuzzleGame from '../views/LasergamePuzzleView.vue'
 import PortfolioView from '../views/PortfolioView.vue'
 import ChapterPage from '../views/ChapterPage.vue'
-
 import ContactView from '@/views/ContactView.vue'
 import PhoneGameView from '@/views/PhoneGameView.vue'
 
@@ -45,6 +45,11 @@ const router = createRouter({
       path: '/laser-game/quiz',
       name: 'quiz',
       component: LasergameQuiz
+    },
+    {
+      path: '/laser-game/puzzle',
+      name: 'puzzle',
+      component: LaserPuzzleGame
     },
     { path: '/portfolio',
       name: 'portfolio',

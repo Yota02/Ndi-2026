@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import NavBar from '@/components/NavBar.vue';
+import NavBar from '@/components/NavBar.vue'
+import TuxAnimation from '@/components/TuxAnimation.vue'
 
-import TuxImg from '@/assets/img/tux-normal.png';
-import TuxImg2 from '@/assets/img/tux-detective.png';
-import NirdLogo from '@/assets/img/logo-nird.png';
+import TuxImg2 from '@/assets/img/tux-detective.png'
+import NirdLogo from '@/assets/img/logo-nird.png'
 
 const scrollDown = () => {
   window.scrollTo({
     top: window.innerHeight,
-    behavior: 'smooth'
-  });
-};
+    behavior: 'smooth',
+  })
+}
 </script>
 
 <template>
@@ -32,14 +32,12 @@ const scrollDown = () => {
         </h1>
 
         <p class="subtitle">
-          Face au Goliath des Big Tech, l'école contre-attaque.<br>
+          Face au Goliath des Big Tech, l'école contre-attaque.<br />
           Rejoignez la démarche <strong>NIRD</strong> : Inclusif, Responsable, Durable.
         </p>
 
         <div class="cta-group">
-          <button class="btn-primary" @click="scrollDown">
-            🔎 Décourvir la NIRD
-          </button>
+          <button class="btn-primary" @click="scrollDown">🔎 Décourvir la NIRD</button>
         </div>
       </div>
 
@@ -50,10 +48,20 @@ const scrollDown = () => {
 
     <section class="story-interlude">
       <div class="container flex-story">
-
         <div class="character-box">
           <div class="hologram-effect"></div>
-          <img :src="TuxImg" alt="Agent Tux" class="tux-character" />
+          <TuxAnimation
+            ref="tuxRef"
+            :x="-20"
+            :y="-500"
+            :width="200"
+            :height="200"
+            :emotion="'leveMain'"
+            :hoverEmotion="'happy'"
+            :enableHover="true"
+            :enableClick="false"
+            :resetOnMouseLeave="true"
+          />
           <div class="char-name">Agent Tuxy</div>
         </div>
 
@@ -62,23 +70,24 @@ const scrollDown = () => {
             <span class="status-dot blink"></span> Alerte Écologique Prioritaire
           </div>
           <p class="typewriter-text">
-            "Psst ! Recrue ! Ici l'Agent Tuxy. <br><br>
-            L'heure est grave pour la planète. <strong>L'Empire Big Tech</strong> a programmé l'obsolescence de milliers d'ordinateurs dans nos écoles.
-            <br><br>
-            Ils veulent nous forcer à jeter du matériel qui fonctionne encore très bien, juste pour vendre du neuf. C'est un gâchis immense !
-            <br><br>
-            Mais la résistance a un plan pour stopper ce gaspillage : la démarche <strong>N.I.R.D</strong>. <br>
-            Son but est de faire durer le matériel le plus longtemps possible. Voici leur stratégie..."
+            "Psst ! Recrue ! Ici l'Agent Tuxy. <br /><br />
+            L'heure est grave pour la planète. <strong>L'Empire Big Tech</strong> a programmé
+            l'obsolescence de milliers d'ordinateurs dans nos écoles. <br /><br />
+            Ils veulent nous forcer à jeter du matériel qui fonctionne encore très bien, juste pour
+            vendre du neuf. C'est un gâchis immense !
+            <br /><br />
+            Mais la résistance a un plan pour stopper ce gaspillage : la démarche
+            <strong>N.I.R.D</strong>. <br />
+            Son but est de faire durer le matériel le plus longtemps possible. Voici leur
+            stratégie..."
           </p>
           <div class="dialogue-arrow">▼</div>
         </div>
-
       </div>
     </section>
 
     <section id="nird-mission" class="mission-section">
       <div class="container">
-
         <div class="mission-branding">
           <div class="logo-wrapper">
             <div class="pulse-ring"></div>
@@ -89,15 +98,15 @@ const scrollDown = () => {
         </div>
 
         <div class="pillars-grid compact-grid">
-
           <div class="card inclusive">
             <div class="card-header-flex">
               <span class="icon-small">🤝</span>
               <h3>Inclusif</h3>
             </div>
             <p>
-              <strong>Pas besoin de PC neuf.</strong><br>
-              La démarche favorise la sobriété : on utilise le matériel existant pour ne laisser personne de côté.
+              <strong>Pas besoin de PC neuf.</strong><br />
+              La démarche favorise la sobriété : on utilise le matériel existant pour ne laisser
+              personne de côté.
             </p>
           </div>
 
@@ -107,8 +116,9 @@ const scrollDown = () => {
               <h3>Responsable</h3>
             </div>
             <p>
-              <strong>Refus du jetable.</strong><br>
-              Le collectif choisit des logiciels légers qui ne ralentissent pas les ordis, évitant leur remplacement.
+              <strong>Refus du jetable.</strong><br />
+              Le collectif choisit des logiciels légers qui ne ralentissent pas les ordis, évitant
+              leur remplacement.
             </p>
           </div>
 
@@ -118,11 +128,11 @@ const scrollDown = () => {
               <h3>Durable</h3>
             </div>
             <p>
-              <strong>Objectif 10 ans.</strong><br>
-              Contre l'obsolescence programmée, on installe Linux pour doubler la durée de vie du matériel.
+              <strong>Objectif 10 ans.</strong><br />
+              Contre l'obsolescence programmée, on installe Linux pour doubler la durée de vie du
+              matériel.
             </p>
           </div>
-
         </div>
 
         <div class="action-footer">
@@ -130,24 +140,21 @@ const scrollDown = () => {
             Voir la Forge NIRD ➔
           </a>
         </div>
-
       </div>
     </section>
 
     <section class="eco-impact-section">
       <div class="container">
-
         <div class="impact-header">
           <span class="alert-badge">⚠️ Données Critiques</span>
           <h2>La Face Cachée de <span class="highlight-impact">votre PC</span></h2>
           <p class="subtitle">
-            Pourquoi s'acharner à garder nos vieux ordinateurs ?<br>
+            Pourquoi s'acharner à garder nos vieux ordinateurs ?<br />
             Parce que le coût réel de fabrication est terrifiant.
           </p>
         </div>
 
         <div class="impact-content">
-
           <div class="rucksack-visual">
             <div class="laptop-icon">💻</div>
             <div class="weight-line">
@@ -160,18 +167,18 @@ const scrollDown = () => {
               <div class="earth-texture"></div>
             </div>
             <p class="caption">
-              C'est le <strong>"Sac à dos écologique"</strong>. <br>
+              C'est le <strong>"Sac à dos écologique"</strong>. <br />
               Jeter ce PC, c'est gaspiller tout ça.
             </p>
           </div>
 
           <div class="stats-grid">
-
             <div class="stat-item">
               <div class="stat-value">80%</div>
               <div class="stat-label">de la pollution</div>
               <p class="stat-desc">
-                L'impact carbone d'un appareil vient de sa <strong>fabrication</strong>, pas de son utilisation électrique.
+                L'impact carbone d'un appareil vient de sa <strong>fabrication</strong>, pas de son
+                utilisation électrique.
               </p>
             </div>
 
@@ -179,7 +186,8 @@ const scrollDown = () => {
               <div class="stat-value">240k</div>
               <div class="stat-label">Litres d'eau</div>
               <p class="stat-desc">
-                Nécessaires pour fabriquer un seul ordinateur (extraction minière et produits chimiques).
+                Nécessaires pour fabriquer un seul ordinateur (extraction minière et produits
+                chimiques).
               </p>
             </div>
 
@@ -187,12 +195,11 @@ const scrollDown = () => {
               <div class="stat-value">2025</div>
               <div class="stat-label">Le grand gâchis</div>
               <p class="stat-desc">
-                La fin de support Windows 10 menace d'envoyer <strong>240 millions</strong> de PC fonctionnels à la casse.
+                La fin de support Windows 10 menace d'envoyer <strong>240 millions</strong> de PC
+                fonctionnels à la casse.
               </p>
             </div>
-
           </div>
-
         </div>
       </div>
     </section>
@@ -288,7 +295,9 @@ const scrollDown = () => {
   border: none;
   font-size: 1.1rem;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
   box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
 }
 
@@ -317,7 +326,10 @@ const scrollDown = () => {
 /* BACKGROUND ANIMÉ (GRILLE CYBERPUNK) */
 .cyber-grid {
   position: absolute;
-  top: 0; left: 0; width: 100%; height: 100%;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   background-image:
     linear-gradient(rgba(16, 185, 129, 0.1) 1px, transparent 1px),
     linear-gradient(90deg, rgba(16, 185, 129, 0.1) 1px, transparent 1px);
@@ -331,20 +343,33 @@ const scrollDown = () => {
 
 .overlay-vignette {
   position: absolute;
-  top: 0; left: 0; width: 100%; height: 100%;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   background: radial-gradient(circle at center, transparent 0%, #0f172a 90%);
   z-index: 2; /* Par dessus la grille pour fondre les bords */
 }
 
 /* ANIMATIONS */
 @keyframes gridMove {
-  0% { background-position: 0 0; }
-  100% { background-position: 0 60px; } /* Doit correspondre à la taille de la grille */
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 60px;
+  } /* Doit correspondre à la taille de la grille */
 }
 
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* INDICATEUR DE SCROLL */
@@ -359,16 +384,34 @@ const scrollDown = () => {
 }
 
 @keyframes bounce {
-  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-  40% { transform: translateY(-10px); }
-  60% { transform: translateY(-5px); }
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
 }
 
 /* RESPONSIVE MOBILE */
 @media (max-width: 768px) {
-  .main-title { font-size: 2.5rem; }
-  .cta-group { flex-direction: column; width: 100%; }
-  .btn-primary, .btn-secondary { width: 100%; }
+  .main-title {
+    font-size: 2.5rem;
+  }
+  .cta-group {
+    flex-direction: column;
+    width: 100%;
+  }
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+  }
 }
 
 /* SECTION STORYTELLING */
@@ -406,7 +449,10 @@ const scrollDown = () => {
 /* Petit effet hologramme (scanline) */
 .hologram-effect {
   position: absolute;
-  top: 0; left: 0; width: 100%; height: 100%;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   background: linear-gradient(rgba(16, 185, 129, 0) 50%, rgba(16, 185, 129, 0.1) 50%);
   background-size: 100% 4px;
   pointer-events: none;
@@ -459,13 +505,16 @@ const scrollDown = () => {
 }
 
 .status-dot {
-  width: 8px; height: 8px;
+  width: 8px;
+  height: 8px;
   background-color: #ef4444; /* Rouge enregistrement */
   border-radius: 50%;
   display: inline-block;
 }
 
-.blink { animation: blinker 1.5s linear infinite; }
+.blink {
+  animation: blinker 1.5s linear infinite;
+}
 
 .typewriter-text {
   font-size: 1.1rem;
@@ -475,7 +524,8 @@ const scrollDown = () => {
 
 .dialogue-arrow {
   position: absolute;
-  bottom: 10px; right: 20px;
+  bottom: 10px;
+  right: 20px;
   color: #34d399;
   animation: bounce 1s infinite;
 }
@@ -489,14 +539,15 @@ const scrollDown = () => {
 
   .dialogue-box::before {
     /* Flèche vers le haut sur mobile */
-    left: 50%; top: -12px;
+    left: 50%;
+    top: -12px;
     transform: translateX(-50%) rotate(90deg);
   }
 
-  .character-box { width: 100px; }
+  .character-box {
+    width: 100px;
+  }
 }
-
-
 
 /** NIRD SECTION **/
 .mission-section {
@@ -537,7 +588,8 @@ const scrollDown = () => {
 /* Animation de pulsation derrière le logo */
 .pulse-ring {
   position: absolute;
-  width: 100%; height: 100%;
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
   border: 2px solid #34d399;
   animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
@@ -545,8 +597,14 @@ const scrollDown = () => {
 }
 
 @keyframes pulse-ring {
-  0% { transform: scale(0.8); opacity: 0.8; }
-  100% { transform: scale(1.5); opacity: 0; }
+  0% {
+    transform: scale(0.8);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
 }
 
 .mission-branding h2 {
@@ -577,7 +635,9 @@ const scrollDown = () => {
   padding: 20px; /* Moins de padding */
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.05);
-  transition: transform 0.2s, border-color 0.2s;
+  transition:
+    transform 0.2s,
+    border-color 0.2s;
 }
 
 .card:hover {
@@ -699,7 +759,10 @@ const scrollDown = () => {
   border: 1px dashed #4b5563;
 }
 
-.laptop-icon { font-size: 4rem; margin-bottom: 10px; }
+.laptop-icon {
+  font-size: 4rem;
+  margin-bottom: 10px;
+}
 
 .visible-weight {
   background: #374151;
@@ -723,14 +786,31 @@ const scrollDown = () => {
 /* Texture "Terre" abstraite */
 .earth-texture {
   position: absolute;
-  bottom: -20px; right: -20px;
-  width: 100px; height: 100px;
-  background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0,0,0,0.1) 10px, rgba(0,0,0,0.1) 20px);
+  bottom: -20px;
+  right: -20px;
+  width: 100px;
+  height: 100px;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10px,
+    rgba(0, 0, 0, 0.1) 10px,
+    rgba(0, 0, 0, 0.1) 20px
+  );
   opacity: 0.5;
 }
 
-.hidden-weight-box h3 { font-size: 2.5rem; margin: 0; color: #fca5a5; font-weight: 900; }
-.caption { margin-top: 20px; font-size: 0.9rem; color: #9ca3af; }
+.hidden-weight-box h3 {
+  font-size: 2.5rem;
+  margin: 0;
+  color: #fca5a5;
+  font-weight: 900;
+}
+.caption {
+  margin-top: 20px;
+  font-size: 0.9rem;
+  color: #9ca3baf;
+}
 
 /* GRILLE STATS (DROITE) */
 .stats-grid {
@@ -749,25 +829,54 @@ const scrollDown = () => {
   transition: transform 0.2s;
 }
 
-.stat-item:hover { transform: translateX(10px); background: rgba(255, 255, 255, 0.06); }
+.stat-item:hover {
+  transform: translateX(10px);
+  background: rgba(255, 255, 255, 0.06);
+}
 
-.stat-item.warning { border-left-color: #ef4444; /* Rouge pour le danger Windows 10 */ }
+.stat-item.warning {
+  border-left-color: #ef4444; /* Rouge pour le danger Windows 10 */
+}
 
-.stat-value { font-size: 2rem; font-weight: 800; color: white; line-height: 1; }
-.stat-label { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; color: #6b7280; margin-bottom: 5px; font-weight: bold; }
-.stat-desc { color: #d1d5db; font-size: 0.95rem; margin: 0; }
+.stat-value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: white;
+  line-height: 1;
+}
+.stat-label {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #6b7280;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+.stat-desc {
+  color: #d1d5db;
+  font-size: 0.95rem;
+  margin: 0;
+}
 
 @keyframes pulse-red {
-  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
-  70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+  0% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
 }
 
 @media (max-width: 768px) {
-  .impact-content { flex-direction: column; gap: 30px; }
-  .stat-item:hover { transform: translateX(0) translateY(-5px); }
+  .impact-content {
+    flex-direction: column;
+    gap: 30px;
+  }
+  .stat-item:hover {
+    transform: translateX(0) translateY(-5px);
+  }
 }
-
-
-
 </style>
