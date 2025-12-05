@@ -408,7 +408,7 @@ const enterSite = () => {
 .skip-btn {
   position: absolute;
   bottom: 30px;
-  right: 30px;
+  right: 100px;
   padding: 10px 20px;
   font-size: 0.9rem;
   background: transparent;

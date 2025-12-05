@@ -5,7 +5,7 @@
       <div v-show="isOpen" class="chat-window">
         <vue-advanced-chat
           style="height: 100%; width: 100%;"
-
+          :theme="'dark'"
           :current-user-id="currentUserId"
           :room-id="'room_1'"
           :single-room="true"
@@ -125,7 +125,7 @@ const sendMessage = async (event: any) => {
   // ---------------------------------
 
   try {
-    const response = await axios.post<FlaskResponse>('http://backend-ndi.cluster-ig3.igpolytech.fr/api/chat', {
+    const response = await axios.post<FlaskResponse>('https://backend-ndi.cluster-ig3.igpolytech.fr/api/chat', {
       history: conversationHistory,
       roomId: roomId
     })
