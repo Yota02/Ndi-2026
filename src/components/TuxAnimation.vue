@@ -16,6 +16,15 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 
+// Import des sprites Tux
+import tuxHappy from '@/assets/tux/tuxHappy-animation.png'
+import tuxSad from '@/assets/tux/tuxTriste1Larme.png'
+import tuxLeveMain from '@/assets/tux/tuxMainDroiteLever.png'
+import tuxSad2 from '@/assets/tux/tuxTriste2Larme.png'
+import tuxClinOeil from '@/assets/tux/tuxClinOeil.png'
+import tuxParleSad from '@/assets/tux/tuxParleTriste.png'
+import tuxNormal from '@/assets/tux/tuxNormal.png'
+
 const props = defineProps({
   emotion: {
     type: String,
@@ -110,13 +119,13 @@ let intervalId: number | null = null
 const imagesPreloaded = ref(false)
 
 const emotionImages: Record<string, string> = {
-  happy: 'assets/tux/tuxHappy-animation.png',
-  sad: 'assets/tux/tuxTriste1Larme.png',
-  leveMain: 'assets/tux/tuxMainDroiteLever.png',
-  sad2: 'assets/tux/tuxTriste2Larme.png',
-  clinOeil: 'assets/tux/tuxClinOeil.png',
-  parleSad: 'assets/tux/tuxParleTriste.png',
-  normal: 'assets/tux/tuxNormal.png',
+  happy: tuxHappy,
+  sad: tuxSad,
+  leveMain: tuxLeveMain,
+  sad2: tuxSad2,
+  clinOeil: tuxClinOeil,
+  parleSad: tuxParleSad,
+  normal: tuxNormal,
 }
 
 const emotionFrames: Record<string, number> = {
