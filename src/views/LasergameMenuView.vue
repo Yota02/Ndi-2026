@@ -14,6 +14,10 @@ const goToQuiz = () => {
 const goToSurvival = () => {
   router.push('/laser-game/survival')
 }
+
+const goToPuzzle = () => {
+  router.push('/laser-game/puzzle')
+}
 </script>
 
 <template>
@@ -38,6 +42,13 @@ const goToSurvival = () => {
           <h2>Tir de Survie</h2>
           <p>Détruisez la pollution, protégez la nature !</p>
         </button>
+
+        <button @click="goToPuzzle" class="game-card puzzle-card">
+          <div class="card-icon">💎</div>
+          <h2>Fibre Optique</h2>
+          <p>Aidez Tuxy à rediriger le signal vers la maison !</p>
+        </button>
+
 
       </div>
     </div>
@@ -94,4 +105,6 @@ const goToSurvival = () => {
 .quiz-card:hover { border-color: #42b883; box-shadow: 0 0 15px rgba(66, 184, 131, 0.4); }
 .survival-card:hover { border-color: #ff4444; box-shadow: 0 0 15px rgba(255, 68, 68, 0.4); }
 .card-icon { font-size: 4rem; margin-bottom: 15px; }
+
+.puzzle-card:hover { border-color: #00bcd4; box-shadow: 0 0 15px rgba(0, 188, 212, 0.4); }
 </style>
