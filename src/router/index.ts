@@ -1,15 +1,20 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import TrailerPage from '../views/TrailerPage.vue'
 import HomePage from '../views/HomeView.vue'
+import Sobriete from '@/views/SobrieteView.vue'
 import LasergameMenuView from '../views/LasergameMenuView.vue'
 import LasergameSurvival from '../views/LasergameSurvivalView.vue'
 import LasergameQuiz from '../views/LasergameQuizView.vue'
 import LaserPuzzleGame from '../views/LasergamePuzzleView.vue'
+import PortfolioView from '../views/PortfolioView.vue'
+import ChapterPage from '../views/ChapterPage.vue'
+import ContactView from '@/views/ContactView.vue'
+import PhoneGameView from '@/views/PhoneGameView.vue'
 
 const SESSION_KEY = 'trailer_seen'
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
@@ -20,6 +25,11 @@ const router = createRouter({
       path: '/home',
       name: 'home',
       component: HomePage
+    },
+    {
+      path: '/sobriete-numerique',
+      name: 'sobriete-numerique',
+      component: Sobriete,
     },
     {
       path: '/laser-game',
@@ -40,6 +50,23 @@ const router = createRouter({
       path: '/laser-game/puzzle',
       name: 'puzzle',
       component: LaserPuzzleGame
+    },
+    { path: '/portfolio',
+      name: 'portfolio',
+      component: PortfolioView
+    },
+    { path: '/chapter/:id',
+      name: 'chapter',
+      component: ChapterPage
+    },  {
+      path: '/contact',
+      name: 'contact',
+      component: ContactView
+     },
+    {
+      path: '/phone-game',
+      name: 'phone-game',
+      component: PhoneGameView
     }
   ]
 })

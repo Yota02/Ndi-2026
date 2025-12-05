@@ -1,13 +1,17 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
+import ChatBot from '@/components/ChatBot.vue'
+
 </script>
 
 <template>
-  <RouterView />
+  <div>
+    <RouterView />
+    <ChatBot />
+  </div>
 </template>
 
 <style>
-/* Reset global */
 * {
   margin: 0;
   padding: 0;
