@@ -1,19 +1,31 @@
 <template>
   <div>
     <div v-if="!overlayState.isLinux && adQueue.length > 0" class="adware-layer-scattered">
-      <div
-        v-for="(adText, index) in adQueue"
-        :key="index"
-        v-show="index === 0"
-        class="ad-banner-scattered widget-style"
-        :style="getRandomAdStyle(index)"
-      >
-        <div class="ad-header widget-header">NOTIFICATION SPONSORISÉE <span @click="$emit('close-ad')" class="ad-close">×</span></div>
-        <div class="ad-content">{{ adText }}</div>
-      </div>
+      <transition-group name="fade">
+        <div
+          v-for="(adText, index) in adQueue"
+          :key="index"
+          v-show="index === 0"
+          class="windows-window ad-popup-styled"
+          :style="getRandomAdStyle(index)"
+        >
+          <div class="window-header ad-header-styled">
+            <span>NOTIFICATION SPONSORISÉE</span>
+            <button @click="$emit('close-ad')" class="ad-close-btn">×</button>
+          </div>
+          <div class="window-body ad-content-styled">
+            <div class="ad-icon">{{ getAdIcon(adText) }}</div>
+            <h3>{{ adText }}</h3>
+            <p class="ad-info">Pour plus d'informations, cliquez ici.</p>
+            <button @click="$emit('close-ad')" class="btn-primary ad-action-btn">
+              Ouvrir (Requis)
+            </button>
+          </div>
+        </div>
+      </transition-group>
     </div>
 
-    <template v-if="!overlayState.isLinux">
+    <template v-if="overlayState.active || showPaywall || showErrorModal || showBingPopup">
 
       <transition name="fade">
         <div v-if="overlayState.active" class="fullscreen-overlay" :class="overlayClass">
@@ -31,13 +43,15 @@
           </div>
 
           <div v-else class="update-content">
-            <div class="loader-ring"></div>
-            <h2>{{ updateMessage }}</h2>
+            <div :class="{'loader-ring': !overlayState.isLinux}"></div> <h2>{{ updateMessage }}</h2>
+
             <div class="progress-bar-wrapper">
-              <div class="progress-bar-fill" :style="{ width: progress + '%' }"></div>
+              <div class="progress-bar-fill" :class="{'linux-bar': overlayState.isLinux}" :style="{ width: progress + '%' }"></div>
             </div>
-            <h1>{{ progress }}%</h1>
-            <p>N'éteignez pas l'ordinateur. Préparation du système pour les publicités.</p>
+
+            <h1 v-if="!overlayState.isLinux">{{ progress }}%</h1>
+            <p v-if="!overlayState.isLinux">N'éteignez pas l'ordinateur. Préparation du système pour les publicités.</p>
+            <p v-else style="color: white; font-family: 'Fira Code', monospace;">Installation en cours... (ne touchez à rien)</p>
           </div>
         </div>
       </transition>
@@ -51,7 +65,7 @@
             </div>
             <div class="clippy-body">
               <p>Je remarque que vous écrivez: "<strong>{{ bingContextValue }}</strong>".</p>
-              <p>L'édition Entreprise inclut l'optimisation neurale de vos pensées.</p>
+              <p>L'édition Entreprise inclus l'optimisation neurale de vos pensées.</p>
               <div class="clippy-actions">
                 <button @click="$emit('accept-bing')" class="btn-bing-primary">Oui (Générer)</button>
                 <button @click="$emit('close-bing')" class="btn-bing-secondary">Non (Refuser le futur)</button>
@@ -130,7 +144,7 @@ const props = defineProps({
   nextPrice: String,
   nextFeature: String,
   canInstallLinux: Boolean,
-  bingContextValue: String, // NOUVEAU: pour afficher l'email dans le popup Bing
+  bingContextValue: String,
 });
 
 defineEmits([
@@ -155,8 +169,18 @@ const getRandomAdStyle = (index) => {
     top: isTop ? `${Math.random() * 20 + 5}%` : 'auto',
     bottom: !isTop ? `${Math.random() * 20 + 5}%` : 'auto',
     left: isLeft ? `${Math.random() * 20 + 5}%` : 'auto',
-    right: !isLeft ? `${Math.random() * 20 + 5}%` : 'auto'
+    right: !isLeft ? `${Math.random() * 20 + 5}%` : 'auto',
+    zIndex: 9250 // Doit être au-dessus de tout sauf des modals bloquants
   };
+};
+
+// Fonction pour les icônes basées sur le texte de la pub
+const getAdIcon = (adText) => {
+  if (adText.includes('PC NEUF')) return '💻';
+  if (adText.includes('BIOS')) return '⚙️';
+  if (adText.includes('VPN')) return '🛡️';
+  if (adText.includes('PRO')) return '🔑';
+  return '📢';
 };
 </script>
 
@@ -165,24 +189,80 @@ const getRandomAdStyle = (index) => {
 .adware-layer-scattered {
   position: fixed;
   inset: 0;
-  z-index: 9050;
+  z-index: 9200; /* Au-dessus de Copilot (9000) */
   pointer-events: none;
 }
 .ad-banner-scattered {
+  /* Styles retirés - utilisant maintenant .windows-window */
+}
+
+/* Styles pour les pop-ups basés sur .windows-window */
+.ad-popup-styled {
   position: fixed;
-  width: 280px;
-  background: rgba(43, 43, 43, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: white;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-  font-family: 'Segoe UI', sans-serif;
-  animation: bounce-in 0.5s;
+  width: 300px;
+  max-width: 90%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   pointer-events: auto;
+  z-index: 9250;
+  background: white;
   border-radius: 8px;
   overflow: hidden;
-  z-index: 9060;
+  color: black;
 }
-.widget-header { background: rgba(31, 31, 31, 0.8); color: #ccc; font-weight: 600; padding: 5px 10px; display: flex; justify-content: space-between; font-size: 0.8rem; cursor: default; }
-.ad-close { cursor: pointer; }
-.ad-content { padding: 15px; text-align: left; font-weight: 400; font-size: 1rem; color: #ffcc00; cursor: pointer; }
+.ad-header-styled {
+  background: #0078D7;
+  color: white;
+  font-weight: bold;
+  padding: 8px 12px;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: none;
+}
+.ad-close-btn {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  line-height: 1;
+}
+.ad-content-styled {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.ad-icon {
+  font-size: 3rem;
+  margin-bottom: 10px;
+}
+.ad-content-styled h3 {
+  margin: 0 0 10px 0;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+.ad-info {
+  font-size: 0.8rem;
+  color: #666;
+  margin-bottom: 15px;
+}
+.ad-action-btn {
+  width: 80%;
+  margin-top: 0;
+  padding: 6px;
+  background: #0078D7;
+  color: white;
+  border: none;
+}
+
+/* Style de barre de progression Linux/Update */
+.linux-bar {
+  background: #00ff00 !important;
+}
+
+.update-content h1 {
+  font-size: 2.5rem;
+  margin: 10px 0;
+}
 </style>

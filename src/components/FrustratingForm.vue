@@ -3,6 +3,7 @@
 
     <transition name="interface-fade" mode="out-in">
       <ContactPage
+        v-if="!overlayState.active"
         :key="isLinuxInstalled"
         :isLinuxInstalled="isLinuxInstalled"
         :windowsVersion="windowsVersion"
@@ -121,7 +122,7 @@ const nextWindowsVersion = computed(() => isEndOfCycle.value ? windowsVersion.va
 const nextEditionName = computed(() => EDITIONS[nextEditionIndex.value].name);
 const nextPrice = computed(() => EDITIONS[nextEditionIndex.value].price);
 const nextFeature = computed(() => EDITIONS[nextEditionIndex.value].feature);
-const canInstallLinux = computed(() => true);
+const canInstallLinux = computed(() => isEndOfCycle.value);
 const isSystemBusy = computed(() => overlayState.active || showPaywall.value || showErrorModal.value || showBingPopup.value);
 
 
@@ -252,10 +253,11 @@ const startInstall = (isLinux) => {
   overlayState.type = 'INSTALL';
   overlayState.isLinux = isLinux;
   progress.value = 0;
+
+  const speed = isLinux ? 30 : 100; // Linux est plus rapide (30ms vs 100ms)
   const updateMsg = isLinux ? "Installation de la liberté..." : `Préparation de Windows ${nextWindowsVersion.value} pour l'activation...`;
   updateMessage.value = updateMsg;
 
-  const speed = isLinux ? 30 : 100;
   const interval = setInterval(() => {
     progress.value += 2;
     if (progress.value >= 100) {
@@ -282,7 +284,7 @@ const finishInstall = (isLinux) => {
       inputValue.value = "";
       emailValue.value = "";
     }
-  }, 1000);
+  }, 500); // Délai réduit à 500ms
 };
 
 // Initialisation de l'heure
@@ -345,8 +347,12 @@ onMounted(() => {
 .loader-ring { width: 40px; height: 40px; border: 4px solid #fff; border-top-color: transparent; border-radius: 50%; margin: 0 auto 20px; animation: spin 1s linear infinite; }
 .progress-bar-wrapper { width: 300px; height: 6px; background: rgba(255,255,255,0.2); margin: 20px auto 0 auto; border-radius: 3px; overflow: hidden; }
 .progress-bar-fill { height: 100%; background: white; transition: width 0.2s; }
-.modal-backdrop, .modal-backdrop-transparent { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 9000; display: flex; justify-content: center; align-items: center; }
-.modal-backdrop-transparent { background: rgba(0,0,0,0.1); z-index: 8500; }
+
+/* Z-index ajusté: Modals bloquants (Paywall/Error) très hauts */
+.modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 9500; display: flex; justify-content: center; align-items: center; }
+/* Bing/Copilot (NON bloquant) doit s'afficher clairement au-dessus du formulaire */
+.modal-backdrop-transparent { position: fixed; inset: 0; background: rgba(0,0,0,0.1); z-index: 9000; display: flex; justify-content: center; align-items: center; }
+
 .windows-window { background: #f0f0f0; width: 450px; border: 1px solid #999; box-shadow: 0 20px 50px rgba(0,0,0,0.5); font-family: 'Segoe UI', sans-serif; color: black; border-radius: 8px; }
 .window-header { background: white; padding: 8px 12px; display: flex; justify-content: space-between; border-bottom: 1px solid #ccc; font-size: 0.9rem; border-top-left-radius: 8px; border-top-right-radius: 8px; }
 .window-body { padding: 25px; text-align: center; }
@@ -373,4 +379,16 @@ onMounted(() => {
 .fade-enter-from, .fade-leave-to { opacity: 0; }
 .bounce-enter-active { animation: bounce-in 0.5s; }
 @keyframes bounce-in { 0% { transform: scale(0); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+
+/* CSS dans ContactPage doit être mis à jour pour le z-index dans le fichier de base Frustrating.vue */
+.login-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 80px;
+  /* Le formulaire est bien au-dessus de l'arrière-plan */
+  position: relative;
+  z-index: 100;
+}
 </style>
