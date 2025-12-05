@@ -1,20 +1,18 @@
 <script setup lang="ts">
-/* --- 1. IMPORTS --- */
-import { ref, onMounted, onUnmounted, computed } from 'vue'
-import { useRouter } from 'vue-router'
+/* IMPORTS & PROPS */
+import { ref, onMounted, onUnmounted, computed, nextTick } from 'vue'
 import tuxSprite from '@/assets/Tux.png'
 
-const router = useRouter()
+// On remplace le Router par un emit pour que le parent gère la sortie
+const emit = defineEmits(['close', 'win'])
 
-// --- CONFIGURATION ---
+// CONFIGURATION
 const BEAM_MAX_LENGTH = 350
 const BEAM_SPEED = 60
 const SCROLL_MARGIN = 150
 const SCROLL_SPEED = 12
 const MAP_HEIGHT = 1500
-const ENTITY_SIZE = 60 // Taille approx visuelle pour cohérence
 
-// --- OFFSETS DU CANON (IDENTIQUES AU MODE SURVIE) ---
 const GUN_OFFSETS = {
   right: { x: 25, y: 23 },
   left:  { x: -25, y: -5 },
@@ -22,41 +20,36 @@ const GUN_OFFSETS = {
   up:    { x: 45, y: -8 }
 };
 
-// --- DONNÉES DU QUIZ ---
+// DONNÉES DU QUIZ
 interface Question {
   id: number; x: number; y: number; prefix: string; opt1: string; opt2: string; suffix: string;
   isOption1: boolean; correctIsOption1: boolean; lastHit: number;
 }
 
-const w = window.innerWidth
-const colLeft = w * 0.15
-const colRight = w * 0.55
+const questions = ref<Question[]>([])
 
-const questions = ref<Question[]>([
-  { id: 1, x: colLeft,  y: 150, prefix: "Les LLMs sont ", opt1: "mauvais", opt2: "bons", suffix: " pour la planète.", isOption1: true, correctIsOption1: true, lastHit: 0 },
-  { id: 2, x: colRight, y: 280, prefix: "Un mail + PJ c'est ", opt1: "lourd", opt2: "léger", suffix: " en CO2.", isOption1: false, correctIsOption1: true, lastHit: 0 },
-  { id: 3, x: colLeft,  y: 410, prefix: "Le streaming c'est ", opt1: "1%", opt2: "60%", suffix: " du web.", isOption1: true, correctIsOption1: false, lastHit: 0 },
-  { id: 4, x: colRight, y: 540, prefix: "Vieux smartphone : ", opt1: "Réparer", opt2: "Jeter", suffix: ".", isOption1: false, correctIsOption1: true, lastHit: 0 },
-  { id: 5, x: colLeft,  y: 670, prefix: "La 4G consomme ", opt1: "moins", opt2: "plus", suffix: " que le Wifi.", isOption1: true, correctIsOption1: false, lastHit: 0 },
-  { id: 6, x: colRight, y: 800, prefix: "Mode sombre OLED : ", opt1: "Utile", opt2: "Inutile", suffix: ".", isOption1: false, correctIsOption1: true, lastHit: 0 },
-  { id: 7, x: colLeft,  y: 930, prefix: "Numérique vs Aviation : ", opt1: "Autant", opt2: "Moins", suffix: " de CO2.", isOption1: false, correctIsOption1: true, lastHit: 0 },
-])
+const rawQuestionsData = [
+  { id: 1, y: 150, prefix: "Les LLMs sont ", opt1: "mauvais", opt2: "bons", suffix: " pour la planète.", isOption1: true, correctIsOption1: true },
+  { id: 2, y: 280, prefix: "Un mail + PJ c'est ", opt1: "lourd", opt2: "léger", suffix: " en CO2.", isOption1: false, correctIsOption1: true },
+  { id: 3, y: 410, prefix: "Le streaming c'est ", opt1: "1%", opt2: "60%", suffix: " du web.", isOption1: true, correctIsOption1: false },
+  { id: 4, y: 540, prefix: "Vieux smartphone : ", opt1: "Réparer", opt2: "Jeter", suffix: ".", isOption1: false, correctIsOption1: true },
+  { id: 5, y: 670, prefix: "La 4G consomme ", opt1: "moins", opt2: "plus", suffix: " que le Wifi.", isOption1: true, correctIsOption1: false },
+  { id: 6, y: 800, prefix: "Mode sombre OLED : ", opt1: "Utile", opt2: "Inutile", suffix: ".", isOption1: false, correctIsOption1: true },
+  { id: 7, y: 930, prefix: "Numérique vs Aviation : ", opt1: "Autant", opt2: "Moins", suffix: " de CO2.", isOption1: false, correctIsOption1: true },
+]
 
-// --- ÉTAT DU JEU ---
-const player = ref({ x: window.innerWidth / 2, y: 250, angle: -Math.PI / 2 })
+// ÉTAT DU JEU
+const player = ref({ x: 0, y: 250, angle: -Math.PI / 2 })
 const mousePos = ref({ x: 0, y: 0 })
 
 // Animation Tux
 const animState = ref({
-  frameIndex: 0,
-  directionRow: 0,
-  flipX: false,
-  lastFrameTime: 0
+  frameIndex: 0, directionRow: 0, flipX: false, lastFrameTime: 0
 })
 
 const beam = ref({
   active: false, head: 0, tail: 0, state: 'idle' as 'idle' | 'shooting' | 'finishing', angle: 0,
-  startX: 0, startY: 0 // Offset visuel
+  startX: 0, startY: 0
 })
 
 const validationMessage = ref("")
@@ -68,19 +61,16 @@ const wordRefs = ref<(HTMLElement | null)[]>([])
 const keys = { z: false, q: false, s: false, d: false }
 const gameLoopId = ref<number | null>(null)
 
-// --- COMPUTED: STYLE DU SPRITE ---
+// STYLE DU SPRITE
 const spriteStyle = computed(() => {
   const sheetW = 714
   const sheetH = 349
   const cols = 5
   const rows = 4
-
   const frameW = sheetW / cols
   const frameH = sheetH / rows
-
   const xPos = -(animState.value.frameIndex * frameW)
   const yPos = -(animState.value.directionRow * frameH)
-
   const scale = 0.9
   const scaleX = animState.value.flipX ? -scale : scale
 
@@ -99,13 +89,9 @@ const spriteStyle = computed(() => {
   }
 })
 
-const laserZIndex = computed(() => {
-  // Si Tux est de dos (Row 0), le laser est derrière (-1)
-  if (animState.value.directionRow === 0) return -1
-  return 10
-})
+const laserZIndex = computed(() => (animState.value.directionRow === 0 ? -1 : 10))
 
-// --- ACTIONS ---
+// ACTIONS
 const validate = () => {
   let errors = 0
   questions.value.forEach(q => { if (q.isOption1 !== q.correctIsOption1) errors++ })
@@ -113,6 +99,7 @@ const validate = () => {
   if (errors === 0) {
     isSuccess.value = true
     validationMessage.value = "EXCELLENT ! 100% Correct ! 🌍✨"
+    emit('win')
   } else {
     isSuccess.value = false
     validationMessage.value = `Encore ${errors} erreur(s) à corriger !`
@@ -120,36 +107,26 @@ const validate = () => {
   }
 }
 
-// --- TIR AVEC OFFSET ---
+// TIR
 const shoot = () => {
-  if (beam.value.active) return
+  if (beam.value.active || !containerRef.value) return
 
-  // Calcul de la position souris DANS LE MONDE (avec scroll)
-  const scrollTop = containerRef.value ? containerRef.value.scrollTop : 0
+  const scrollTop = containerRef.value.scrollTop
   const worldMouseY = mousePos.value.y + scrollTop
 
   const dx = mousePos.value.x - player.value.x
   const dy = worldMouseY - player.value.y
   const aimAngle = Math.atan2(dy, dx)
 
-  // 1. Orienter le joueur vers la cible
   player.value.angle = aimAngle
-
-  // 2. Calculer l'offset (Haut/Bas/Gauche/Droite)
   const deg = aimAngle * (180 / Math.PI)
   let offset = { x: 0, y: 0 }
 
-  if (deg > -45 && deg <= 45) {
-    offset = GUN_OFFSETS.right
-  } else if (deg > 45 && deg <= 135) {
-    offset = GUN_OFFSETS.down
-  } else if (deg > -135 && deg <= -45) {
-    offset = GUN_OFFSETS.up
-  } else {
-    offset = GUN_OFFSETS.left
-  }
+  if (deg > -45 && deg <= 45) offset = GUN_OFFSETS.right
+  else if (deg > 45 && deg <= 135) offset = GUN_OFFSETS.down
+  else if (deg > -135 && deg <= -45) offset = GUN_OFFSETS.up
+  else offset = GUN_OFFSETS.left
 
-  // 3. Activer le tir
   beam.value.active = true
   beam.value.state = 'shooting'
   beam.value.head = 0
@@ -159,64 +136,53 @@ const shoot = () => {
   beam.value.startY = offset.y
 }
 
-// --- MISE A JOUR DIRECTION VISUELLE ---
 const updateSpriteDirection = () => {
   const deg = player.value.angle * (180 / Math.PI)
-  if (deg > -45 && deg <= 45) {
-    animState.value.directionRow = 2; animState.value.flipX = false
-  } else if (deg > 45 && deg <= 135) {
-    animState.value.directionRow = 1; animState.value.flipX = false
-  } else if (deg > -135 && deg <= -45) {
-    animState.value.directionRow = 0; animState.value.flipX = false
-  } else {
-    animState.value.directionRow = 2; animState.value.flipX = true
-  }
+  if (deg > -45 && deg <= 45) { animState.value.directionRow = 2; animState.value.flipX = false }
+  else if (deg > 45 && deg <= 135) { animState.value.directionRow = 1; animState.value.flipX = false }
+  else if (deg > -135 && deg <= -45) { animState.value.directionRow = 0; animState.value.flipX = false }
+  else { animState.value.directionRow = 2; animState.value.flipX = true }
 }
 
-// --- LOGIQUE & COLLISION ---
+// LOGIQUE & COLLISION
 const checkCollision = (index: number) => {
   const el = wordRefs.value[index]
   if (!el || !containerRef.value) return false
 
-  const rect = el.getBoundingClientRect()
+  const containerRect = containerRef.value.getBoundingClientRect()
+  const elRect = el.getBoundingClientRect()
   const scrollTop = containerRef.value.scrollTop
 
-  const boxLeft = rect.left
-  const boxRight = rect.right
-  const boxTop = rect.top + scrollTop
-  const boxBottom = rect.bottom + scrollTop
+  const boxLeft = elRect.left - containerRect.left
+  const boxRight = elRect.right - containerRect.left
+  const boxTop = (elRect.top - containerRect.top) + scrollTop
+  const boxBottom = (elRect.bottom - containerRect.top) + scrollTop
 
-  // Origine réelle du tir = Joueur + Offset Canon
   const originX = player.value.x + beam.value.startX
   const originY = player.value.y + beam.value.startY
-
   const endX = originX + Math.cos(beam.value.angle) * beam.value.head
   const endY = originY + Math.sin(beam.value.angle) * beam.value.head
 
   const margin = 10
-  return (
-    endX >= boxLeft - margin &&
-    endX <= boxRight + margin &&
-    endY >= boxTop - margin &&
-    endY <= boxBottom + margin
-  )
+  return (endX >= boxLeft - margin && endX <= boxRight + margin && endY >= boxTop - margin && endY <= boxBottom + margin)
 }
 
 const update = (timestamp: number) => {
-  const scrollTop = containerRef.value ? containerRef.value.scrollTop : 0
-  const containerHeight = window.innerHeight
+  if (!containerRef.value) return
 
-  // 1. Mouvement
+  const containerHeight = containerRef.value.clientHeight
+  const containerWidth = containerRef.value.clientWidth
+  const scrollTop = containerRef.value.scrollTop
+
+  // Mouvement
   let dx = 0
   let dy = 0
   if (keys.z && player.value.y > 0) dy -= 1
   if (keys.s && player.value.y < MAP_HEIGHT) dy += 1
   if (keys.q && player.value.x > 0) dx -= 1
-  if (keys.d && player.value.x < window.innerWidth) dx += 1
+  if (keys.d && player.value.x < containerWidth) dx += 1
 
   const isMoving = dx !== 0 || dy !== 0
-
-  // Vitesse constante même en diagonale
   const speed = 5
   if (isMoving) {
     const moveSpeed = (dx !== 0 && dy !== 0) ? speed / 1.414 : speed
@@ -224,19 +190,26 @@ const update = (timestamp: number) => {
     player.value.y += dy * moveSpeed
   }
 
-  // 2. Scroll Auto (Gameplay spécifique au Quiz)
-  if (containerRef.value) {
-    const playerScreenY = player.value.y - scrollTop
-    if (playerScreenY > containerHeight - SCROLL_MARGIN) containerRef.value.scrollTop += SCROLL_SPEED
-    if (playerScreenY < SCROLL_MARGIN && scrollTop > 0) containerRef.value.scrollTop -= SCROLL_SPEED
-  }
+  // Scroll Auto
+  const margin = SCROLL_MARGIN
+  const playerScreenY = player.value.y - scrollTop
 
-  // 3. Orientation : Priorité Tir > Mouvement
+  // Si le joueur descend trop bas (Pousse le bas de l'écran)
+  if (playerScreenY > containerHeight - margin) {
+    // On cale le scroll pour que le joueur reste exactement à la limite de la marge
+    containerRef.value.scrollTop = player.value.y - (containerHeight - margin)
+  }
+  // Si le joueur monte trop haut (Pousse le haut de l'écran)
+  else if (playerScreenY < margin) {
+    // On cale le scroll pour que le joueur reste exactement à la marge du haut
+    containerRef.value.scrollTop = player.value.y - margin
+  }
+  // Orientation
   if (!beam.value.active && isMoving) {
     player.value.angle = Math.atan2(dy, dx)
   }
 
-  // 4. Animation Marche
+  // Animation
   if (isMoving) {
     if (timestamp - animState.value.lastFrameTime > 120) {
       animState.value.frameIndex = (animState.value.frameIndex + 1) % 5
@@ -246,10 +219,9 @@ const update = (timestamp: number) => {
     animState.value.frameIndex = 0
   }
 
-  // 5. Mise à jour Sprite
   updateSpriteDirection()
 
-  // 6. Animation Laser
+  // Laser
   if (beam.value.active) {
     if (beam.value.state === 'shooting') {
       beam.value.head += BEAM_SPEED
@@ -280,13 +252,28 @@ const update = (timestamp: number) => {
 // --- LISTENERS ---
 const handleKeyDown = (e: KeyboardEvent) => { if(e.key.toLowerCase() in keys) keys[e.key.toLowerCase() as keyof typeof keys] = true }
 const handleKeyUp = (e: KeyboardEvent) => { if(e.key.toLowerCase() in keys) keys[e.key.toLowerCase() as keyof typeof keys] = false }
-const handleMouseMove = (e: MouseEvent) => { mousePos.value = { x: e.clientX, y: e.clientY } }
+const handleMouseMove = (e: MouseEvent) => {
+  if (!containerRef.value) return
+  const rect = containerRef.value.getBoundingClientRect()
+  mousePos.value = { x: e.clientX - rect.left, y: e.clientY - rect.top }
+}
 
-onMounted(() => {
+onMounted(async () => {
+  await nextTick()
+  if (containerRef.value) {
+    const w = containerRef.value.clientWidth
+    const colLeft = w * 0.15
+    const colRight = w * 0.55
+    player.value.x = w / 2
+    questions.value = rawQuestionsData.map((q, index) => ({
+      ...q,
+      x: index % 2 === 0 ? colLeft : colRight,
+      lastHit: 0
+    }))
+  }
   gameLoopId.value = requestAnimationFrame(update)
   window.addEventListener('keydown', handleKeyDown)
   window.addEventListener('keyup', handleKeyUp)
-  if(window.innerWidth < 800) questions.value.forEach(q => q.x = 20)
 })
 
 onUnmounted(() => {
@@ -297,12 +284,11 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="quiz-container" ref="containerRef" @mousemove="handleMouseMove" @mousedown="shoot">
+  <div class="game-wrapper" ref="containerRef" @mousemove="handleMouseMove" @mousedown="shoot">
 
     <div class="fixed-ui-layer">
       <div class="header-panel">
-
-        <button @click="router.push('/')" @mousedown.stop class="back-btn">⬅ Retour</button>
+        <button @click="emit('close')" @mousedown.stop class="back-btn">⬅ Retour</button>
         <h1 class="title">QUIZ LASER 🐧</h1>
         <p class="subtitle">Utilisez ZQSD pour vous déplacer !</p>
       </div>
@@ -310,84 +296,139 @@ onUnmounted(() => {
       <div v-if="validationMessage" class="feedback" :class="{ 'success': isSuccess }">
         {{ validationMessage }}
       </div>
-
-      <div class="bottom-bar">
-        <button @click.stop="validate" @mousedown.stop class="validate-btn">✅ VÉRIFIER</button>
-      </div>
     </div>
 
     <div class="world-layer" :style="{ height: MAP_HEIGHT + 'px' }">
-      <div
-        v-for="(q, index) in questions"
-        :key="q.id"
-        class="question-item"
-        :style="{ top: q.y + 'px', left: q.x + 'px' }"
-      >
+      <div v-for="(q, index) in questions" :key="q.id" class="question-item" :style="{ top: q.y + 'px', left: q.x + 'px' }">
         <span class="text-base">{{ q.prefix }}</span>
-        <span
-          :ref="(el) => wordRefs[index] = (el as HTMLElement)"
-          class="target-word"
-          :class="q.isOption1 ? 'opt-red' : 'opt-green'"
-        >
+        <span :ref="(el) => wordRefs[index] = (el as HTMLElement)" class="target-word" :class="q.isOption1 ? 'opt-red' : 'opt-green'">
           {{ q.isOption1 ? q.opt1 : q.opt2 }}
         </span>
         <span class="text-base">{{ q.suffix }}</span>
       </div>
 
-      <div class="player-wrapper" :style="{ transform: `translate(${player.x}px, ${player.y}px)` }">
-
-        <div
-          class="laser-pivot"
-          :style="{
-             transform: `translate(${beam.startX}px, ${beam.startY}px) rotate(${beam.angle}rad)`,
-             zIndex: laserZIndex
-          }"
-        >
+      <div class="player-wrapper" :style="{ transform: `translate(${Math.round(player.x)}px, ${Math.round(player.y)}px)` }">
+        <div class="laser-pivot" :style="{ transform: `translate(${beam.startX}px, ${beam.startY}px) rotate(${beam.angle}rad)`, zIndex: laserZIndex }">
           <div v-if="beam.active" class="laser-beam" :style="{ left: beam.tail + 'px', width: (beam.head - beam.tail) + 'px' }">
             <div class="laser-core"></div>
             <div class="laser-glow"></div>
           </div>
         </div>
-
         <div :style="spriteStyle"></div>
-
       </div>
+    </div>
+
+    <div class="bottom-bar">
+      <button @click.stop="validate" @mousedown.stop class="validate-btn">
+        ✅ VÉRIFIER
+      </button>
     </div>
 
   </div>
 </template>
 
 <style scoped>
-.quiz-container {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  width: 100vw; height: 100vh;
+/* WRAPPER PRINCIPAL */
+.game-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
   background-color: #111;
   color: white;
   overflow-y: auto;
-  z-index: 9999;
+  overflow-x: hidden;
   cursor: crosshair;
   user-select: none;
+  scrollbar-width: thin;
+  scrollbar-color: #42b883 #111;
 }
 
-/* UI Fixe */
-.fixed-ui-layer { position: sticky; top: 0; left: 0; width: 100%; height: 0; z-index: 100; pointer-events: none; }
-.header-panel { pointer-events: auto; background: rgba(17, 17, 17, 0.95); padding: 10px; border-bottom: 2px solid #42b883; }
-.back-btn { float: left; background: transparent; border: 1px solid white; color: white; padding: 5px 15px; cursor: pointer; border-radius: 4px; font-family: sans-serif; }
+/* UI DU HAUT */
+.fixed-ui-layer {
+  position: sticky;
+  top: 0; left: 0;
+  width: 100%; height: 0;
+  z-index: 100;
+  pointer-events: none;
+}
+.header-panel {
+  pointer-events: auto;
+  background: rgba(17, 17, 17, 0.95);
+  padding: 10px;
+  border-bottom: 2px solid #42b883;
+}
+.back-btn {
+  float: left;
+  background: transparent;
+  border: 1px solid white;
+  color: white;
+  padding: 5px 15px;
+  cursor: pointer;
+  border-radius: 4px;
+}
 .back-btn:hover { background: white; color: black; }
 .title { text-align: center; margin: 0; color: #42b883; font-size: 1.5rem; text-transform: uppercase; letter-spacing: 2px; }
 .subtitle { text-align: center; color: #888; margin: 0; font-size: 0.9rem; }
 
-.bottom-bar { position: fixed; bottom: 20px; width: 100%; display: flex; justify-content: center; pointer-events: none; }
-.validate-btn { pointer-events: auto; padding: 15px 40px; font-size: 1.5rem; background: #42b883; color: white; border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.3); font-weight: bold; transition: transform 0.2s; }
-.validate-btn:hover { background: #3aa876; transform: scale(1.1); }
-.feedback { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.95); padding: 40px; border-radius: 15px; font-size: 2rem; border: 4px solid #ff4444; pointer-events: none; text-align: center; }
+/* FEEDBACK MSG */
+.feedback {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0,0,0,0.95);
+  padding: 40px;
+  border-radius: 15px;
+  font-size: 2rem;
+  border: 4px solid #ff4444;
+  pointer-events: none;
+  text-align: center;
+  z-index: 200;
+}
 .feedback.success { border-color: #42b883; color: #42b883; }
 
-/* Monde */
-.world-layer { position: relative; width: 100%; }
+/* UI DU BAS (LE BOUTON VÉRIFIER) */
+.bottom-bar {
+  position: fixed;        /* Fixé par rapport à l'écran */
+  bottom: 5vh;            /* Placé à 5% du bas */
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 999;
+}
 
-/* --- STYLE DES TEXTES --- */
+.validate-btn {
+  pointer-events: auto;
+  /* Centrage Flexbox Parfait */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  /* Dimensions Fixes */
+  height: 60px;
+  padding: 0 40px;
+  line-height: normal;
+  padding-bottom: 3px;
+  /* Style */
+  font-size: 1.5rem;
+  font-weight: 800;
+  font-family: 'Segoe UI', sans-serif;
+  text-transform: uppercase;
+  white-space: nowrap;
+  background: #42b883;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  transition: transform 0.1s ease;
+}
+.validate-btn:hover { background: #3aa876; transform: scale(1.05); }
+.validate-btn:active { transform: scale(0.95); }
+
+/* WORLD LAYER */
+.world-layer { position: relative; width: 100%; }
 .question-item {
   position: absolute;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -395,25 +436,21 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
 }
-
 .text-base { font-size: 1.3rem; color: #ccc; }
-
 .target-word {
   display: inline-block;
   padding: 5px 10px;
   margin: 0 5px;
-  font-weight: 800; /* Gras */
+  font-weight: 800;
   font-size: 1.5rem;
   cursor: crosshair;
-  transition: transform 0.2s, color 0.2s, text-shadow 0.2s;
+  transition: transform 0.2s, color 0.2s;
 }
-
 .target-word:hover { transform: scale(1.1); }
+.opt-red { color: #ff5555; text-shadow: 0 0 10px rgba(255, 85, 85, 0.6); }
+.opt-green { color: #42b883; text-shadow: 0 0 10px rgba(66, 184, 131, 0.6); }
 
-.opt-red { color: #ff5555; text-shadow: 0 0 10px rgba(255, 85, 85, 0.6), 0 0 20px rgba(255, 85, 85, 0.3); }
-.opt-green { color: #42b883; text-shadow: 0 0 10px rgba(66, 184, 131, 0.6), 0 0 20px rgba(66, 184, 131, 0.3); }
-
-/* JOUEUR & LASER */
+/* PLAYER */
 .player-wrapper { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 50; will-change: transform; }
 .laser-pivot { position: absolute; top: 0; left: 0; width: 0; height: 0; }
 .laser-beam { position: absolute; top: -15px; height: 0; z-index: 10; pointer-events: none; }
