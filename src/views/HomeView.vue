@@ -2,6 +2,8 @@
 import NavBar from '@/components/NavBar.vue';
 
 import TuxImg from '@/assets/img/tux-normal.png';
+import TuxImg2 from '@/assets/img/tux-detective.png';
+import NirdLogo from '@/assets/img/logo-nird.png';
 
 const scrollDown = () => {
   window.scrollTo({
@@ -57,15 +59,16 @@ const scrollDown = () => {
 
         <div class="dialogue-box">
           <div class="dialogue-header">
-            <span class="status-dot blink"></span> Transmission Cryptée v2.025
+            <span class="status-dot blink"></span> Alerte Écologique Prioritaire
           </div>
           <p class="typewriter-text">
             "Psst ! Recrue ! Ici l'Agent Tuxy. <br><br>
-            La situation est critique. <strong>L'Empire des GAFAM</strong> tente de verrouiller notre école avec des logiciels fermés et obsolètes.
+            L'heure est grave pour la planète. <strong>L'Empire Big Tech</strong> a programmé l'obsolescence de milliers d'ordinateurs dans nos écoles.
             <br><br>
-            Heureusement, un groupe de résistants a mis au point un plan de défense :
-            la démarche <strong>N.I.R.D</strong>. <br>
-            C'est notre seule chance de garder notre liberté numérique. Voici leur stratégie..."
+            Ils veulent nous forcer à jeter du matériel qui fonctionne encore très bien, juste pour vendre du neuf. C'est un gâchis immense !
+            <br><br>
+            Mais la résistance a un plan pour stopper ce gaspillage : la démarche <strong>N.I.R.D</strong>. <br>
+            Son but est de faire durer le matériel le plus longtemps possible. Voici leur stratégie..."
           </p>
           <div class="dialogue-arrow">▼</div>
         </div>
@@ -76,53 +79,121 @@ const scrollDown = () => {
     <section id="nird-mission" class="mission-section">
       <div class="container">
 
-        <div class="mission-header">
-          <span class="section-tag">// Le Plan de Bataille</span>
-          <h2>L'Arme Secrète : <span class="text-nird">N.I.R.D</span></h2>
-          <p class="mission-desc">
-            Pour transformer votre l'école en village résistant, la démarche NIRD propose une stratégie en 3 axes.
-            Une initiative venue d'en bas pour changer les choses en haut.
-          </p>
+        <div class="mission-branding">
+          <div class="logo-wrapper">
+            <div class="pulse-ring"></div>
+            <img :src="NirdLogo" alt="Logo NIRD" class="nird-logo-main" />
+          </div>
+          <h2>L'Alternative <span class="text-nird">Écologique</span></h2>
+          <p class="subtitle-compact">3 piliers pour stopper le gaspillage numérique.</p>
         </div>
 
-        <div class="pillars-grid">
+        <div class="pillars-grid compact-grid">
 
           <div class="card inclusive">
-            <div class="icon-box">🤝</div>
-            <h3>Inclusif</h3>
+            <div class="card-header-flex">
+              <span class="icon-small">🤝</span>
+              <h3>Inclusif</h3>
+            </div>
             <p>
-              Le numérique ne doit laisser personne de côté. NIRD vise à redonner le
-              <strong>pouvoir d'agir</strong> aux élèves, aux profs et aux familles,
-              pour ne plus dépendre d'experts coûteux.
+              <strong>Pas besoin de PC neuf.</strong><br>
+              La démarche favorise la sobriété : on utilise le matériel existant pour ne laisser personne de côté.
             </p>
           </div>
 
           <div class="card responsible">
-            <div class="icon-box">🛡️</div>
-            <h3>Responsable</h3>
+            <div class="card-header-flex">
+              <span class="icon-small">⚖️</span>
+              <h3>Responsable</h3>
+            </div>
             <p>
-              Stop au pillage des données. En privilégiant des outils
-              <strong>éthiques et souverains</strong>, le collectif protège la vie privée
-              de la communauté éducative hors des GAFAM.
+              <strong>Refus du jetable.</strong><br>
+              Le collectif choisit des logiciels légers qui ne ralentissent pas les ordis, évitant leur remplacement.
             </p>
           </div>
 
           <div class="card durable">
-            <div class="icon-box">🌱</div>
-            <h3>Durable</h3>
+            <div class="card-header-flex">
+              <span class="icon-small">🌱</span>
+              <h3>Durable</h3>
+            </div>
             <p>
-              Pourquoi jeter des PC qui marchent ? Contre l'obsolescence programmée,
-              la démarche encourage l'installation de <strong>Linux</strong> pour faire durer le matériel
-              plus longtemps.
+              <strong>Objectif 10 ans.</strong><br>
+              Contre l'obsolescence programmée, on installe Linux pour doubler la durée de vie du matériel.
             </p>
           </div>
 
         </div>
 
-        <div class="forge-link">
-          <p>Cette démarche est portée par la <a href="https://nird.forge.apps.education.fr/" target="_blank" class="link-highlight">Forge des Communs Numériques</a>.</p>
+        <div class="action-footer">
+          <a href="https://nird.forge.apps.education.fr/" target="_blank" class="btn-forge">
+            Voir la Forge NIRD ➔
+          </a>
         </div>
 
+      </div>
+    </section>
+
+    <section class="eco-impact-section">
+      <div class="container">
+
+        <div class="impact-header">
+          <span class="alert-badge">⚠️ Données Critiques</span>
+          <h2>La Face Cachée de <span class="highlight-impact">votre PC</span></h2>
+          <p class="subtitle">
+            Pourquoi s'acharner à garder nos vieux ordinateurs ?<br>
+            Parce que le coût réel de fabrication est terrifiant.
+          </p>
+        </div>
+
+        <div class="impact-content">
+
+          <div class="rucksack-visual">
+            <div class="laptop-icon">💻</div>
+            <div class="weight-line">
+              <span class="visible-weight">2 kg (Poids visible)</span>
+              <span class="arrow-down">⬇️</span>
+            </div>
+            <div class="hidden-weight-box">
+              <h3>800 kg</h3>
+              <p>de matières premières extraites</p>
+              <div class="earth-texture"></div>
+            </div>
+            <p class="caption">
+              C'est le <strong>"Sac à dos écologique"</strong>. <br>
+              Jeter ce PC, c'est gaspiller tout ça.
+            </p>
+          </div>
+
+          <div class="stats-grid">
+
+            <div class="stat-item">
+              <div class="stat-value">80%</div>
+              <div class="stat-label">de la pollution</div>
+              <p class="stat-desc">
+                L'impact carbone d'un appareil vient de sa <strong>fabrication</strong>, pas de son utilisation électrique.
+              </p>
+            </div>
+
+            <div class="stat-item">
+              <div class="stat-value">240k</div>
+              <div class="stat-label">Litres d'eau</div>
+              <p class="stat-desc">
+                Nécessaires pour fabriquer un seul ordinateur (extraction minière et produits chimiques).
+              </p>
+            </div>
+
+            <div class="stat-item warning">
+              <div class="stat-value">2025</div>
+              <div class="stat-label">Le grand gâchis</div>
+              <p class="stat-desc">
+                La fin de support Windows 10 menace d'envoyer <strong>240 millions</strong> de PC fonctionnels à la casse.
+              </p>
+            </div>
+
+          </div>
+
+        </div>
       </div>
     </section>
   </div>
@@ -429,129 +500,273 @@ const scrollDown = () => {
 
 /** NIRD SECTION **/
 .mission-section {
-  padding: 80px 20px;
-  background-color: #111827; /* Un poil plus clair que le hero pour le contraste */
+  padding: 60px 20px;
+  background-color: #111827;
   position: relative;
 }
 
 .container {
-  max-width: 1100px;
+  max-width: 1000px;
   margin: 0 auto;
 }
 
-/* EN-TÊTE DE SECTION */
-.mission-header {
+/* LOGO & BRANDING */
+.mission-branding {
   text-align: center;
-  margin-bottom: 60px;
+  margin-bottom: 40px;
 }
 
-.section-tag {
-  color: #64748b;
-  font-family: 'Courier New', monospace;
-  font-size: 0.9rem;
-  display: block;
-  margin-bottom: 10px;
+.logo-wrapper {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 20px auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.mission-header h2 {
-  font-size: 2.5rem;
+.nird-logo-main {
+  width: 100%;
+  height: auto;
+  position: relative;
+  z-index: 2;
+  filter: drop-shadow(0 0 15px rgba(52, 211, 153, 0.3));
+}
+
+/* Animation de pulsation derrière le logo */
+.pulse-ring {
+  position: absolute;
+  width: 100%; height: 100%;
+  border-radius: 50%;
+  border: 2px solid #34d399;
+  animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+  z-index: 1;
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.8); opacity: 0.8; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+
+.mission-branding h2 {
+  font-size: 2rem;
   font-weight: 800;
-  margin-bottom: 20px;
+  margin-bottom: 5px;
+}
+
+.subtitle-compact {
+  color: #9ca3af;
+  font-size: 1.1rem;
 }
 
 .text-nird {
-  background: linear-gradient(90deg, #f472b6, #a78bfa, #34d399); /* Dégradé 3 couleurs */
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: #34d399; /* Vert NIRD simple et efficace */
 }
 
-.mission-desc {
-  max-width: 700px;
-  margin: 0 auto;
-  color: #9ca3af;
-  font-size: 1.1rem;
-  line-height: 1.6;
-}
-
-/* GRILLE DES CARTES */
+/* GRILLE COMPACTE */
 .pillars-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 30px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
 }
 
-/* CARTE INDIVIDUELLE */
+/* CARTE ALLÉGÉE */
 .card {
   background: #1f2937;
-  padding: 30px;
-  border-radius: 16px;
+  padding: 20px; /* Moins de padding */
+  border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.05);
-  transition: transform 0.3s, border-color 0.3s;
-  position: relative;
-  overflow: hidden;
+  transition: transform 0.2s, border-color 0.2s;
 }
 
 .card:hover {
-  transform: translateY(-10px);
+  transform: translateY(-5px);
+  border-color: #34d399;
+  background: #252f3f;
+}
+
+.card-header-flex {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.icon-small {
+  font-size: 1.5rem;
 }
 
 .card h3 {
-  font-size: 1.5rem;
-  margin-bottom: 15px;
-  font-weight: 700;
+  font-size: 1.2rem; /* Titre plus petit */
+  margin: 0;
+  color: white;
 }
 
 .card p {
   color: #d1d5db;
-  font-size: 1rem;
+  font-size: 0.95rem; /* Texte plus petit */
   line-height: 1.5;
+  margin: 0;
 }
 
-.icon-box {
-  font-size: 3rem;
-  margin-bottom: 20px;
-}
-
-/* COULEURS SPÉCIFIQUES PAR PILIER */
-/* Inclusif (Rose/Violet) */
-.card.inclusive:hover { border-color: #f472b6; }
-.card.inclusive h3 { color: #f472b6; }
-
-/* Responsable (Bleu/Violet) */
-.card.responsible:hover { border-color: #a78bfa; }
-.card.responsible h3 { color: #a78bfa; }
-
-/* Durable (Vert) */
-.card.durable:hover { border-color: #34d399; }
-.card.durable h3 { color: #34d399; }
-
-/* LIEN FORGE */
-.forge-link {
-  text-align: center;
-  margin-top: 50px;
-  padding-top: 30px;
-  border-top: 1px solid #374151;
-}
-
-.forge-link p {
-  color: #6b7280;
-}
-
-.link-highlight {
+.card strong {
   color: #34d399;
+  display: block;
+  margin-bottom: 4px;
+}
+
+/* BOUTON FORGE (Discret) */
+.action-footer {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.btn-forge {
+  display: inline-block;
+  color: #9ca3af;
+  border: 1px solid #4b5563;
+  padding: 10px 20px;
+  border-radius: 50px;
   text-decoration: none;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.btn-forge:hover {
+  border-color: #34d399;
+  color: #34d399;
+  background: rgba(16, 185, 129, 0.05);
+}
+
+/* SECTION ECO IMPACT */
+.eco-impact-section {
+  padding: 80px 20px;
+  background-color: #111827;
+  color: white;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.impact-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.alert-badge {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+  border: 1px solid #f87171;
+  padding: 5px 12px;
+  border-radius: 4px;
+  font-size: 0.8rem;
   font-weight: bold;
-  border-bottom: 1px dashed #34d399;
-  transition: color 0.2s;
+  text-transform: uppercase;
+  margin-bottom: 15px;
+  display: inline-block;
+  animation: pulse-red 2s infinite;
 }
 
-.link-highlight:hover {
-  color: #10b981;
-  border-bottom-style: solid;
+.highlight-impact {
+  color: #f87171; /* Rouge pâle */
+  text-decoration: underline;
+  text-decoration-color: rgba(248, 113, 113, 0.5);
 }
 
+.subtitle {
+  color: #9ca3af;
+  font-size: 1.1rem;
+}
 
+/* CONTENU PRINCIPAL (FLEX) */
+.impact-content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 60px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* VISUEL SAC A DOS (GAUCHE) */
+.rucksack-visual {
+  flex: 1;
+  min-width: 300px;
+  text-align: center;
+  background: #1f2937;
+  padding: 30px;
+  border-radius: 20px;
+  border: 1px dashed #4b5563;
+}
+
+.laptop-icon { font-size: 4rem; margin-bottom: 10px; }
+
+.visible-weight {
+  background: #374151;
+  padding: 5px 15px;
+  border-radius: 50px;
+  font-size: 0.9rem;
+  color: #e5e7eb;
+}
+
+.hidden-weight-box {
+  background: linear-gradient(135deg, #4b5563 0%, #1f2937 100%);
+  margin-top: 10px;
+  padding: 20px;
+  border-radius: 12px;
+  color: white;
+  border: 2px solid #6b7280;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Texture "Terre" abstraite */
+.earth-texture {
+  position: absolute;
+  bottom: -20px; right: -20px;
+  width: 100px; height: 100px;
+  background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0,0,0,0.1) 10px, rgba(0,0,0,0.1) 20px);
+  opacity: 0.5;
+}
+
+.hidden-weight-box h3 { font-size: 2.5rem; margin: 0; color: #fca5a5; font-weight: 900; }
+.caption { margin-top: 20px; font-size: 0.9rem; color: #9ca3af; }
+
+/* GRILLE STATS (DROITE) */
+.stats-grid {
+  flex: 1;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.stat-item {
+  background: rgba(255, 255, 255, 0.03);
+  padding: 20px;
+  border-left: 4px solid #34d399; /* Vert par défaut */
+  border-radius: 0 10px 10px 0;
+  transition: transform 0.2s;
+}
+
+.stat-item:hover { transform: translateX(10px); background: rgba(255, 255, 255, 0.06); }
+
+.stat-item.warning { border-left-color: #ef4444; /* Rouge pour le danger Windows 10 */ }
+
+.stat-value { font-size: 2rem; font-weight: 800; color: white; line-height: 1; }
+.stat-label { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; color: #6b7280; margin-bottom: 5px; font-weight: bold; }
+.stat-desc { color: #d1d5db; font-size: 0.95rem; margin: 0; }
+
+@keyframes pulse-red {
+  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+@media (max-width: 768px) {
+  .impact-content { flex-direction: column; gap: 30px; }
+  .stat-item:hover { transform: translateX(0) translateY(-5px); }
+}
 
 
 
