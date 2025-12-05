@@ -5,7 +5,7 @@ import Sobriete from '@/views/SobrieteView.vue'
 import LasergameMenuView from '../views/LasergameMenuView.vue'
 import LasergameSurvival from '../views/LasergameSurvivalView.vue'
 import LasergameQuiz from '../views/LasergameQuizView.vue'
-import Portfolio from '../views/Portfolio.vue'
+import PortfolioView from '../views/PortfolioView.vue'
 import ChapterPage from '../views/ChapterPage.vue'
 
 
@@ -46,11 +46,11 @@ const router = createRouter({
     },
     { path: '/portfolio',
       name: 'portfolio',
-      component: Portfolio
+      component: PortfolioView
     },
     { path: '/chapter/:id',
       name: 'chapter',
-      component: ChapterPage 
+      component: ChapterPage
     }
   ]
 })

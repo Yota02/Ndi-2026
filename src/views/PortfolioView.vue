@@ -1,4 +1,18 @@
+<script setup lang="ts">
+import { useRouter } from 'vue-router'
+import NavBar from '@/components/NavBar.vue'
+import coverImage from '@/assets/portfolio/cover.jpg'
+import cvFile from '@/assets/portfolio/CV.pdf'
+
+const router = useRouter()
+
+function startChapter() {
+  router.push('/chapter/1')
+}
+</script>
+
 <template>
+  <NavBar />
   <div class="cover-page">
 
     <div class="content-container">
@@ -25,18 +39,6 @@
   </div>
 </template>
 
-<script setup>
-import { useRouter } from 'vue-router'
-import coverImage from '@/assets/portfolio/cover.jpg'
-import cvFile from '@/assets/portfolio/CV.pdf'
-
-const router = useRouter()
-
-function startChapter() {
-  router.push('/chapter/1')
-}
-</script>
-
 <style scoped>
 .cover-page {
   display: flex;
@@ -44,7 +46,7 @@ function startChapter() {
   align-items: center;
   min-height: 100vh;
   padding: 40px 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #1a1a1a;
   box-sizing: border-box;
 }
 
@@ -195,16 +197,16 @@ function startChapter() {
   .content-container {
     gap: 35px;
   }
-  
+
   .title {
     font-size: 36px;
   }
-  
+
   .action-btn {
     font-size: 18px;
     padding: 14px 28px;
   }
-  
+
   .btn-icon {
     font-size: 22px;
   }
@@ -214,24 +216,24 @@ function startChapter() {
   .cover-page {
     padding: 30px 15px;
   }
-  
+
   .content-container {
     gap: 30px;
   }
-  
+
   .title {
     font-size: 30px;
   }
-  
+
   .action-btn {
     font-size: 16px;
     padding: 12px 24px;
   }
-  
+
   .btn-icon {
     font-size: 20px;
   }
-  
+
   .cover-wrapper {
     padding: 10px;
   }
