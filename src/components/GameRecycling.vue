@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-const emit = defineEmits(['finish'])
+const emit = defineEmits(['finish', 'restart'])
 
 // --- VARIABLES ---
 // 'none', 'trash', 'recycle'
@@ -23,6 +23,10 @@ function onDrop(event: DragEvent, destination: string) {
 
 function finirJeu() {
     emit('finish')
+}
+
+function rejouerCycle() {
+    emit('restart')
 }
 </script>
 
@@ -103,7 +107,7 @@ function finirJeu() {
         </div>
 
         <div class="end-buttons">
-             <button @click="location.reload()" class="restart-btn">REJOUER LE CYCLE</button>
+             <button @click="rejouerCycle" class="restart-btn">REJOUER LE CYCLE</button>
         </div>
     </div>
 

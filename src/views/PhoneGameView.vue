@@ -23,6 +23,10 @@ function changerNiveau(niveau: number) {
 function allerAuNiveauSuivant() {
     currentLevel.value++
 }
+
+function recommencerJeu() {
+    currentLevel.value = 1
+}
 </script>
 
 <template>
@@ -43,7 +47,7 @@ function allerAuNiveauSuivant() {
         <GameTransport v-else-if="currentLevel === 3" @finish="allerAuNiveauSuivant" />
         <GameUsage v-else-if="currentLevel === 4" @finish="allerAuNiveauSuivant" />
 
-        <GameRecycling v-else-if="currentLevel === 5" @finish="allerAuNiveauSuivant" />
+        <GameRecycling v-else-if="currentLevel === 5" @finish="allerAuNiveauSuivant" @restart="recommencerJeu" />
     </div>
 
   </div>
