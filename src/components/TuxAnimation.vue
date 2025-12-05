@@ -7,9 +7,10 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 
 // Définition des propriétés pour rendre le composant flexible
 const props = defineProps({
-  imageUrl: {
+  emotion: {
     type: String,
     required: true,
+    validator: (value: string) => ['happy', 'sad', 'angry', 'surprised'].includes(value),
   },
   frameWidth: {
     type: Number,
@@ -17,19 +18,15 @@ const props = defineProps({
   },
   frameHeight: {
     type: Number,
-    default: 500, // Hauteur du pingouin (à ajuster selon votre image réelle)
+    default: 500, // Hauteur du pingouin
   },
   gap: {
     type: Number,
-    default: 20, // L'espace entre chaque pingouin
-  },
-  totalFrames: {
-    type: Number,
-    default: 4, // Il y a 4 pingouins sur votre image
+    default: 0, // L'espace entre chaque pingouin
   },
   speed: {
     type: Number,
-    default: 200, // Vitesse en millisecondes entre chaque frame
+    default: 100, // Vitesse en millisecondes entre chaque frame
   },
   x: {
     type: Number,
@@ -41,16 +38,44 @@ const props = defineProps({
   },
   width: {
     type: Number,
-    default: 500, // Largeur du composant, par défaut égale à frameWidth
+    default: 500, // Largeur du composant
   },
   height: {
     type: Number,
-    default: 500, // Hauteur du composant, par défaut égale à frameHeight
+    default: 500, // Hauteur du composant
   },
 })
 
 const currentFrame = ref(0)
-let intervalId = null
+let intervalId: number | null = null
+
+// Mapping des émotions vers les URLs des images
+const emotionImages: Record<string, string> = {
+  happy: '/Ndi-2026/public/assets/tuxHappy-animation.png',
+  sad: '/Ndi-2026/public/assets/tuxTriste1Larme.png',
+  leveMain: '/Ndi-2026/public/assets/tuxMainDroiteLever.png',
+  sad2: '/Ndi-2026/public/assets/tuxTriste2Larme.png',
+  clinOeil: '/Ndi-2026/public/assets/tuxClinOeil.png',
+  parleSad: '/Ndi-2026/public/assets/tuxParleTriste.png',
+  normal: '/Ndi-2026/public/assets/tuxNormal.png',
+}
+
+// Mapping des émotions vers le nombre de frames
+const emotionFrames: Record<string, number> = {
+  happy: 4,
+  sad: 7,
+  leveMain: 4,
+  sad2: 9,
+  clinOeil: 4,
+  parleSad: 2,
+  normal: 4,
+}
+
+// Récupération de l'URL de l'image basée sur l'émotion
+const imageUrl = computed(() => emotionImages[props.emotion])
+
+// Calcul du nombre total de frames basé sur l'émotion
+const totalFrames = computed(() => emotionFrames[props.emotion])
 
 // Calcul dynamique de la position de l'image de fond
 const spriteStyle = computed(() => {
@@ -58,7 +83,7 @@ const spriteStyle = computed(() => {
   const scale = props.width / props.frameWidth
 
   // Largeur totale de l'image (frames + écarts)
-  const totalImageWidth = props.totalFrames * props.frameWidth + (props.totalFrames - 1) * props.gap
+  const totalImageWidth = totalFrames.value * props.frameWidth + (totalFrames.value - 1) * props.gap
 
   // Position X ajustée à l'échelle
   const positionX = -(currentFrame.value * (props.frameWidth + props.gap) * scale)
@@ -66,7 +91,7 @@ const spriteStyle = computed(() => {
   return {
     width: `${props.width}px`,
     height: `${props.height}px`,
-    backgroundImage: `url(${props.imageUrl})`,
+    backgroundImage: `url(${imageUrl.value})`,
     backgroundSize: `${totalImageWidth * scale}px ${props.frameHeight * scale}px`,
     backgroundPosition: `${positionX}px 0px`,
     backgroundRepeat: 'no-repeat',
@@ -80,7 +105,7 @@ const spriteStyle = computed(() => {
 const startAnimation = () => {
   intervalId = setInterval(() => {
     // On passe à la frame suivante, et on revient à 0 après la dernière
-    currentFrame.value = (currentFrame.value + 1) % props.totalFrames
+    currentFrame.value = (currentFrame.value + 1) % totalFrames.value
   }, props.speed)
 }
 
@@ -97,11 +122,8 @@ onUnmounted(() => {
 
 <style scoped>
 .sprite-container {
-  /* Assure que l'image s'affiche net (pixel art) si on redimensionne,
-     bien que ce ne soit pas le cas ici */
+  /* Assure que l'image s'affiche net (pixel art) si on redimensionne */
   image-rendering: pixelated;
-
-  /* Pour centrer ou ajouter des bordures si nécessaire */
   display: inline-block;
   overflow: hidden; /* Sécurité pour ne pas voir le voisin */
 }
