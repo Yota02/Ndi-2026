@@ -5,7 +5,7 @@
       <div v-show="isOpen" class="chat-window">
         <vue-advanced-chat
           style="height: 100%; width: 100%;"
-
+          :theme="'dark'"
           :current-user-id="currentUserId"
           :room-id="'room_1'"
           :single-room="true"
