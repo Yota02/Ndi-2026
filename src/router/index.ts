@@ -1,6 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import TrailerPage from '../views/TrailerPage.vue'
 import HomePage from '../views/HomeView.vue'
+import LasergameMenuView from '../views/LasergameMenuView.vue'
+import LasergameSurvival from '../views/LasergameSurvivalView.vue'
+import LasergameQuiz from '../views/LasergameQuizView.vue'
 
 const SESSION_KEY = 'trailer_seen'
 
@@ -16,6 +19,21 @@ const router = createRouter({
       path: '/home',
       name: 'home',
       component: HomePage
+    },
+    {
+      path: '/laser-game',
+      name: 'laser-game',
+      component: LasergameMenuView
+    },
+    {
+      path: '/laser-game/survival',
+      name: 'survival',
+      component: LasergameSurvival
+    },
+    {
+      path: '/laser-game/quiz',
+      name: 'quiz',
+      component: LasergameQuiz
     }
   ]
 })
