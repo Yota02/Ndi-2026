@@ -4,6 +4,9 @@ import { ref, computed, onMounted, reactive } from 'vue';
 // Importation des composants
 import ContactPage from '@/components/ContactPage.vue';
 import Overlays from '@/components/Overlays.vue';
+import TuxAnimation from '@/components/TuxAnimation.vue';
+
+const tuxRef = ref();
 
 // --- CONFIGURATION ---
 const EDITIONS = [
@@ -58,6 +61,17 @@ const nextFeature = computed(() => EDITIONS[nextEditionIndex.value].feature);
 const canInstallLinux = computed(() => isEndOfCycle.value);
 const isSystemBusy = computed(() => overlayState.active || showPaywall.value || showErrorModal.value || showBingPopup.value);
 
+const updateTuxEmotion = (emotion: string) => {
+  if (tuxRef.value) {
+    tuxRef.value.setTemporaryEmotion(emotion);
+  }
+};
+
+const resetTuxEmotion = () => {
+  if (tuxRef.value) {
+    tuxRef.value.resetToBase();
+  }
+};
 
 // --- LOGIQUE CORE ---
 
@@ -72,6 +86,7 @@ const rotateBrokenMethod = () => {
 // Logique de Frustration (Déclenchée par les deux inputs)
 const triggerFrustration = () => {
   keyPressCount.value++;
+  updateTuxEmotion('angry'); // Tux devient en colère
 
   let aiThreshold = 1.0;
   if (editionIndex.value === 2) aiThreshold = 0.7;
@@ -85,15 +100,57 @@ const triggerFrustration = () => {
     triggerSystemInterruption();
   }
 };
+const onContactPageHover = (isHovering: boolean) => {
+  if (isHovering) {
+    updateTuxEmotion('clinOeil'); // Tux cligne de l'œil au hover
+  } else {
+    resetTuxEmotion();
+  }
+};
+const onContactPageClick = () => {
+  updateTuxEmotion('leveMain'); // Tux lève la main
+};
+const closePaywall = () => {
+  showPaywall.value = false;
+  rotateBrokenMethod();
+  resetTuxEmotion(); // Reset Tux
+  triggerSystemInterruption();
+};
+const startInstall = (isLinux) => {
+  overlayState.active = true;
+  overlayState.type = 'INSTALL';
+  overlayState.isLinux = isLinux;
+  progress.value = 0;
 
+  // Tux change selon le type d'installation
+  if (isLinux) {
+    updateTuxEmotion('happy');
+  } else {
+    updateTuxEmotion('sad');
+  }
+
+  const speed = isLinux ? 30 : 100;
+  const updateMsg = isLinux ? "Installation de la liberté..." : `Préparation de Windows ${nextWindowsVersion.value} pour l'activation...`;
+  updateMessage.value = updateMsg;
+
+  const interval = setInterval(() => {
+    progress.value += 2;
+    if (progress.value >= 100) {
+      clearInterval(interval);
+      finishInstall(isLinux);
+    }
+  }, speed);
+};
 // Logique pour l'action de soumission
 const handleAction = (method) => {
   if (method === brokenMethod.value) {
+    updateTuxEmotion('sad'); // Tux devient triste
     errorModalText.value = method === 'ENTER'
       ? "Clavier non détecté. Veuillez acheter un clavier Surface."
       : "Souris incompatible. Clic sur le bouton d'accès désactivé.";
     showErrorModal.value = true;
   } else {
+    updateTuxEmotion('happy'); // Tux devient heureux
     showPaywall.value = true;
   }
 };
@@ -172,33 +229,10 @@ const acceptBing = () => {
   showBingPopup.value = false;
 };
 
-const closePaywall = () => {
-  showPaywall.value = false;
-  rotateBrokenMethod();
-  triggerSystemInterruption();
-};
 
 const buyUpgrade = () => { showPaywall.value = false; startInstall(false); };
 const installLinux = () => { showPaywall.value = false; startInstall(true); };
 
-const startInstall = (isLinux) => {
-  overlayState.active = true;
-  overlayState.type = 'INSTALL';
-  overlayState.isLinux = isLinux;
-  progress.value = 0;
-
-  const speed = isLinux ? 30 : 100; // Linux est plus rapide (30ms vs 100ms)
-  const updateMsg = isLinux ? "Installation de la liberté..." : `Préparation de Windows ${nextWindowsVersion.value} pour l'activation...`;
-  updateMessage.value = updateMsg;
-
-  const interval = setInterval(() => {
-    progress.value += 2;
-    if (progress.value >= 100) {
-      clearInterval(interval);
-      finishInstall(isLinux);
-    }
-  }, speed);
-};
 
 const finishInstall = (isLinux) => {
   setTimeout(() => {
@@ -230,7 +264,19 @@ onMounted(() => {
 
 <template>
   <div class="main-container login-background" :class="{ 'theme-linux': isLinuxInstalled, 'theme-windows': !isLinuxInstalled }">
-
+    <TuxAnimation
+      ref="tuxRef"
+      :emotion="isLinuxInstalled ? 'happy' : 'normal'"
+      :x="75"
+      :y="15"
+      :width="150"
+      :height="150"
+      :speed="200"
+      :enableHover="true"
+      :enableClick="false"
+      :resetOnMouseLeave="true"
+      :hoverEmotion="isLinuxInstalled ? 'happy' : 'surprised'"
+    />
     <transition name="interface-fade" mode="out-in">
       <ContactPage
         v-if="!overlayState.active"
@@ -249,7 +295,10 @@ onMounted(() => {
         @trigger-frustration="triggerFrustration"
         @action-trigger="handleAction"
         @start-session="isLinuxInstalled = false"
+        @contact-hover="onContactPageHover"
+        @contact-click="onContactPageClick"
       />
+
     </transition>
 
     <div class="system-bar" v-if="!isLinuxInstalled">

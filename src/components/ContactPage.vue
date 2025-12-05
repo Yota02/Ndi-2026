@@ -1,5 +1,5 @@
 <template>
-  <div class="login-container">
+  <div class="login-container" @mouseenter="$emit('contact-hover', true)" @mouseleave="$emit('contact-hover', false)" @click="$emit('contact-click')">
     <div class="contact-card" :class="{ 'windows-mode': !isLinuxInstalled, 'linux-mode': isLinuxInstalled }">
 
       <img
@@ -106,7 +106,6 @@ const props = defineProps({
 });
 
 // Événements mis à jour
-defineEmits(['update:inputValue', 'update:emailValue', 'trigger-frustration', 'action-trigger', 'start-session']);
 
 const inputRef = ref(null);
 
@@ -117,6 +116,8 @@ const submitLinuxQuery = () => {
   props.emailValue = '';
   props.inputValue = '';
 };
+defineEmits(['update:inputValue', 'update:emailValue', 'trigger-frustration', 'action-trigger', 'start-session', 'contact-hover', 'contact-click']);
+
 </script>
 
 <style scoped>
