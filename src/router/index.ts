@@ -5,6 +5,7 @@ import Sobriete from '@/views/SobrieteView.vue'
 import LasergameMenuView from '../views/LasergameMenuView.vue'
 import LasergameSurvival from '../views/LasergameSurvivalView.vue'
 import LasergameQuiz from '../views/LasergameQuizView.vue'
+import ContactView from '@/views/ContactView.vue'
 import PhoneGameView from '@/views/PhoneGameView.vue'
 
 const SESSION_KEY = 'trailer_seen'
@@ -43,6 +44,10 @@ const router = createRouter({
       component: LasergameQuiz
     },
     {
+      path: '/contact',
+      name: 'contact',
+      component: ContactView
+     },
       path: '/phone-game',
       name: 'phone-game',
       component: PhoneGameView
