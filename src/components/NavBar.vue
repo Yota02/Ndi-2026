@@ -6,7 +6,7 @@ import { RouterLink } from 'vue-router';
   <nav class="navbar">
     <div class="navbar-container">
       <RouterLink to="/home" class="navbar-logo">
-        Logo
+        <img src="@/assets/img/tux-normal.png" alt="Tuxy" class="tux-triste"/>
       </RouterLink>
 
       <ul class="navbar-menu">
@@ -83,5 +83,10 @@ import { RouterLink } from 'vue-router';
   .navbar-link {
     font-size: 0.85rem;
   }
+}
+
+img {
+  width: 10%;
+  height: 10%;
 }
 </style>

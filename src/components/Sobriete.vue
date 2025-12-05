@@ -27,7 +27,7 @@ const currentQuestion = computed(() => questions[qIndex.value]);
 
 const answer = (userChoice: boolean) => {
   showResult.value = true;
-  if (userChoice === currentQuestion.value.answer) {
+  if (userChoice === currentQuestion.value?.answer) {
     tuxMood.value = TuxyContent;
   } else {
     tuxMood.value = TuxyTriste;
@@ -260,15 +260,25 @@ const nextQuestion = () => {
     <section class="interactive-check">
       <h2>Test d'aptitude "Résistant Numérique"</h2>
       <div class="quiz-container">
-        <div class="question-box">
+
+        <div class="question-box" v-if="currentQuestion">
+
           <p>{{ currentQuestion.text }}</p>
+
           <div class="buttons">
             <button @click="answer(true)" :class="{success: showResult && currentQuestion.answer}">VRAI</button>
             <button @click="answer(false)" :class="{success: showResult && !currentQuestion.answer}">FAUX</button>
           </div>
+
           <p v-if="showResult" class="feedback">{{ currentQuestion.feedback }}</p>
           <button v-if="showResult" @click="nextQuestion" class="btn-next">Suivant ➡️</button>
+
         </div>
+
+        <div v-else class="end-screen">
+          <p>Quiz terminé ! 🎉</p>
+        </div>
+
         <div class="tux-judge">
           <img :src="tuxMood" alt="Tuxy reaction" class="tux-mood-img" />
         </div>
