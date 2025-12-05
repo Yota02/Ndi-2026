@@ -13,250 +13,337 @@ function startChapter() {
 
 <template>
   <NavBar />
-  <div class="cover-page">
+  <main class="landing-page">
 
-    <div class="content-container">
-      <!-- IMAGE DE COUVERTURE -->
-      <div class="cover-container">
-        <div class="cover-wrapper">
-          <img :src="coverImage" alt="Couverture de la BD" class="cover-img" />
+    <div class="bg-glow glow-1"></div>
+    <div class="bg-glow glow-2"></div>
+
+    <div class="content-wrapper">
+
+      <section class="info-section">
+        <div class="text-content">
+          <span class="subtitle">Portfolio Créatif</span>
+          <h1 class="main-title">
+            Ma BD <br />
+            <span class="highlight">Portfolio</span>
+          </h1>
+          <p class="description">
+            Découvrez mon parcours et mes compétences à travers une expérience narrative unique.
+          </p>
         </div>
-        <h1 class="title">Ma BD Portfolio</h1>
-      </div>
 
-      <!-- BOUTONS D'ACTION -->
-      <div class="actions-container">
-        <button @click="startChapter" class="action-btn start-btn">
-          <span class="btn-text">Commencer la BD</span>
-        </button>
+        <div class="actions-group">
+          <button @click="startChapter" class="btn btn-primary">
+            <span class="btn-content">
+              <span>Lire la BD</span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </span>
+          </button>
 
-        <a :href="cvFile" target="_blank" class="action-btn cv-btn">
-          <span class="btn-text">Voir mon CV</span>
-        </a>
-      </div>
+          <a :href="cvFile" target="_blank" class="btn btn-secondary">
+            <span class="btn-content">
+              <span>CV PDF</span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            </span>
+          </a>
+        </div>
+      </section>
+
+      <section class="visual-section">
+        <div class="book-container">
+          <div class="book">
+            <div class="book-cover">
+              <img :src="coverImage" alt="Couverture BD" />
+            </div>
+            <div class="book-pages"></div>
+            <div class="book-back"></div>
+          </div>
+          <div class="book-shadow"></div>
+        </div>
+      </section>
+
     </div>
-
-  </div>
+  </main>
 </template>
 
 <style scoped>
-.cover-page {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  padding: 40px 20px;
-  background: #1a1a1a;
-  box-sizing: border-box;
-}
-
-.content-container {
-  width: 100%;
-  max-width: 600px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 40px;
-}
-
-/* Section couverture */
-.cover-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 25px;
-  width: 100%;
-}
-
-.cover-wrapper {
+/* --- CONFIGURATION GLOBALE --- */
+.landing-page {
   position: relative;
+  min-height: 100vh;
   width: 100%;
-  max-width: 480px;
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  background: white;
-  padding: 12px;
-}
-
-.cover-wrapper:hover {
-  transform: translateY(-10px) scale(1.02);
-  box-shadow: 0 30px 80px rgba(0,0,0,0.5);
-}
-
-.cover-img {
-  width: 100%;
-  height: auto;
-  display: block;
-  border-radius: 12px;
-}
-
-.title {
-  font-size: 42px;
-  font-weight: bold;
+  background-color: #0f172a; /* Bleu nuit profond */
   color: white;
-  text-align: center;
-  text-shadow: 2px 4px 8px rgba(0,0,0,0.3);
-  margin: 0;
-  letter-spacing: 1px;
-}
-
-/* Section boutons */
-.actions-container {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  width: 100%;
-  max-width: 400px;
-  align-items: center;
-}
-
-.action-btn {
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* --- BACKGROUND ANIMÉ --- */
+.bg-glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  z-index: 0;
+  opacity: 0.4;
+  animation: float 10s infinite alternate ease-in-out;
+}
+
+.glow-1 {
+  top: -10%;
+  left: -10%;
+  width: 50vw;
+  height: 50vw;
+  background: radial-gradient(circle, #7c3aed 0%, transparent 70%);
+}
+
+.glow-2 {
+  bottom: -10%;
+  right: -10%;
+  width: 40vw;
+  height: 40vw;
+  background: radial-gradient(circle, #2563eb 0%, transparent 70%);
+}
+
+@keyframes float {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(30px, 50px); }
+}
+
+/* --- LAYOUT PRINCIPAL --- */
+.content-wrapper {
+  position: relative;
+  z-index: 1;
   width: 100%;
-  font-size: 20px;
+  max-width: 1200px;
+  padding: 80px 24px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+
+/* --- SECTION GAUCHE (TEXTE) --- */
+.info-section {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  animation: slideInLeft 0.8s ease-out;
+}
+
+.subtitle {
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-size: 14px;
   font-weight: 600;
-  padding: 16px 32px;
+  color: #a78bfa; /* Violet clair */
+}
+
+.main-title {
+  font-size: 4rem;
+  line-height: 1.1;
+  font-weight: 800;
+  margin: 0;
+}
+
+.highlight {
+  background: linear-gradient(120deg, #c084fc 0%, #6366f1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.description {
+  font-size: 1.1rem;
+  color: #94a3b8; /* Gris bleuté */
+  line-height: 1.6;
+  max-width: 450px;
+  margin: 0;
+}
+
+/* --- BOUTONS --- */
+.actions-group {
+  display: flex;
+  gap: 20px;
+  margin-top: 10px;
+}
+
+.btn {
+  padding: 14px 28px;
   border-radius: 12px;
-  border: none;
+  font-weight: 600;
+  font-size: 1rem;
   cursor: pointer;
   text-decoration: none;
-  transition: all 0.3s ease;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-primary {
+  background: white;
+  color: #0f172a;
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.3);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: white;
+  transform: translateY(-3px);
+}
+
+/* --- SECTION DROITE (LIVRE 3D) --- */
+.visual-section {
+  display: flex;
+  justify-content: center;
+  perspective: 1500px; /* Clé pour la 3D */
+  animation: fadeIn 1s ease-out;
+}
+
+.book-container {
   position: relative;
-  overflow: hidden;
+  width: 320px;
+  height: 460px; /* Ratio standard BD/Comics */
+  z-index: 10;
 }
 
-.action-btn::before {
-  content: '';
+.book {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transform: rotateY(-25deg) rotateX(5deg);
+  transition: transform 0.5s ease;
+  box-shadow: 20px 20px 50px rgba(0,0,0,0.5);
+}
+
+.book-container:hover .book {
+  transform: rotateY(-10deg) rotateX(0deg) scale(1.02);
+}
+
+.book-cover {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.2);
-  transform: translate(-50%, -50%);
-  transition: width 0.6s, height 0.6s;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #1e293b;
+  border-radius: 4px 8px 8px 4px;
+  overflow: hidden;
+  transform-origin: left;
+  z-index: 2;
 }
 
-.action-btn:hover::before {
-  width: 300px;
-  height: 300px;
+.book-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-.btn-icon {
-  font-size: 24px;
+/* Effet des pages sur le côté (épaisseur) */
+.book-pages {
+  position: absolute;
+  top: 4px;
+  right: -15px; /* Épaisseur du livre */
+  width: 15px;
+  height: calc(100% - 8px);
+  background: linear-gradient(to right, #ccc, #eee, #ccc);
+  transform: rotateY(90deg);
+  transform-origin: left;
   z-index: 1;
 }
 
-.btn-text {
-  z-index: 1;
+/* Ombre sous le livre */
+.book-shadow {
+  position: absolute;
+  bottom: -30px;
+  left: 20px;
+  width: 90%;
+  height: 20px;
+  background: rgba(0,0,0,0.6);
+  filter: blur(20px);
+  transform: rotateY(-25deg);
+  z-index: -1;
+  transition: all 0.5s ease;
 }
 
-/* Bouton commencer */
-.start-btn {
-  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-  color: white;
+.book-container:hover .book-shadow {
+  transform: rotateY(-10deg) scale(0.9);
+  opacity: 0.8;
 }
 
-.start-btn:hover {
-  background: linear-gradient(135deg, #218838 0%, #1aa179 100%);
-  transform: translateY(-3px);
-  box-shadow: 0 10px 30px rgba(40,167,69,0.4);
+/* --- ANIMATIONS D'ENTRÉE --- */
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-50px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
-.start-btn:active {
-  transform: translateY(-1px);
-  box-shadow: 0 5px 15px rgba(40,167,69,0.3);
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-/* Bouton CV */
-.cv-btn {
-  background: linear-gradient(135deg, #007BFF 0%, #0056b3 100%);
-  color: white;
-}
-
-.cv-btn:hover {
-  background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
-  transform: translateY(-3px);
-  box-shadow: 0 10px 30px rgba(0,123,255,0.4);
-}
-
-.cv-btn:active {
-  transform: translateY(-1px);
-  box-shadow: 0 5px 15px rgba(0,123,255,0.3);
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-  .content-container {
-    gap: 35px;
+/* --- RESPONSIVE --- */
+@media (max-width: 968px) {
+  .content-wrapper {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 40px;
+    padding-top: 100px;
   }
 
-  .title {
-    font-size: 36px;
+  .info-section {
+    align-items: center;
   }
 
-  .action-btn {
-    font-size: 18px;
-    padding: 14px 28px;
+  .description {
+    margin: 0 auto;
   }
 
-  .btn-icon {
-    font-size: 22px;
+  .visual-section {
+    perspective: 1000px;
+    margin-bottom: 40px;
+  }
+
+  .book-container {
+    width: 260px;
+    height: 380px;
   }
 }
 
 @media (max-width: 480px) {
-  .cover-page {
-    padding: 30px 15px;
+  .main-title {
+    font-size: 2.8rem;
   }
 
-  .content-container {
-    gap: 30px;
+  .actions-group {
+    flex-direction: column;
+    width: 100%;
   }
 
-  .title {
-    font-size: 30px;
+  .btn {
+    width: 100%;
   }
-
-  .action-btn {
-    font-size: 16px;
-    padding: 12px 24px;
-  }
-
-  .btn-icon {
-    font-size: 20px;
-  }
-
-  .cover-wrapper {
-    padding: 10px;
-  }
-}
-
-/* Animation d'entrée */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.cover-container,
-.actions-container {
-  animation: fadeInUp 0.8s ease-out;
-}
-
-.actions-container {
-  animation-delay: 0.2s;
 }
 </style>
