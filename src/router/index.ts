@@ -8,6 +8,8 @@ import LasergameQuiz from '../views/LasergameQuizView.vue'
 import PortfolioView from '../views/PortfolioView.vue'
 import ChapterPage from '../views/ChapterPage.vue'
 
+import ContactView from '@/views/ContactView.vue'
+import PhoneGameView from '@/views/PhoneGameView.vue'
 
 const SESSION_KEY = 'trailer_seen'
 
@@ -51,6 +53,15 @@ const router = createRouter({
     { path: '/chapter/:id',
       name: 'chapter',
       component: ChapterPage
+    {
+      path: '/contact',
+      name: 'contact',
+      component: ContactView
+     },
+    {
+      path: '/phone-game',
+      name: 'phone-game',
+      component: PhoneGameView
     }
   ]
 })
