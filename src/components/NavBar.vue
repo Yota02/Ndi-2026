@@ -1,20 +1,20 @@
 <script setup lang="ts">
-import { ref } from 'vue'; // Import nécessaire pour la réactivité
-import { RouterLink } from 'vue-router';
+import { ref } from 'vue' // Import nécessaire pour la réactivité
+import { RouterLink } from 'vue-router'
 import SpriteAnimation from '@/components/TuxAnimation.vue'
 
 // État pour gérer l'ouverture/fermeture du menu
-const isMenuOpen = ref(false);
+const isMenuOpen = ref(false)
 
 // Fonction pour basculer l'état
 const toggleMenu = () => {
-  isMenuOpen.value = !isMenuOpen.value;
-};
+  isMenuOpen.value = !isMenuOpen.value
+}
 
 // Fonction pour fermer le menu quand on clique sur un lien
 const closeMenu = () => {
-  isMenuOpen.value = false;
-};
+  isMenuOpen.value = false
+}
 </script>
 
 <template>
@@ -39,26 +39,39 @@ const closeMenu = () => {
       <ul class="navbar-menu">
         <li><RouterLink to="/home" class="navbar-link">Accueil</RouterLink></li>
         <li><RouterLink to="/portfolio" class="navbar-link">Portfolio</RouterLink></li>
-        <li><RouterLink to="/sobriete-numerique" class="navbar-link">Sobriété numérique</RouterLink></li>
+        <li>
+          <RouterLink to="/sobriete-numerique" class="navbar-link">Sobriété numérique</RouterLink>
+        </li>
         <li><RouterLink to="/laser-game" class="navbar-link">Laser Game</RouterLink></li>
-        <li><RouterLink to="/phone-game" class="navbar-link">Cycle de vie Smartphone</RouterLink></li>
+        <li>
+          <RouterLink to="/phone-game" class="navbar-link">Cycle de vie Smartphone</RouterLink>
+        </li>
         <li><RouterLink to="/contact" class="navbar-link">Contact</RouterLink></li>
-      <div
-        class="hamburger"
-        :class="{ 'active': isMenuOpen }"
-        @click="toggleMenu"
-      >
+      </ul>
+      <div class="hamburger" :class="{ active: isMenuOpen }" @click="toggleMenu">
         <span class="bar"></span>
         <span class="bar"></span>
         <span class="bar"></span>
       </div>
 
-      <ul class="navbar-menu" :class="{ 'active': isMenuOpen }">
+      <ul class="navbar-menu" :class="{ active: isMenuOpen }">
         <li><RouterLink to="/home" class="navbar-link" @click="closeMenu">Accueil</RouterLink></li>
-        <li><RouterLink to="/portfolio" class="navbar-link" @click="closeMenu">Portfolio</RouterLink></li>
-        <li><RouterLink to="/sobriete-numerique" class="navbar-link" @click="closeMenu">Sobriété numérique</RouterLink></li>
-        <li><RouterLink to="/laser-game" class="navbar-link" @click="closeMenu">Laser Game</RouterLink></li>
-        <li><RouterLink to="/contact" class="navbar-link" @click="closeMenu">Contact</RouterLink></li>
+        <li>
+          <RouterLink to="/portfolio" class="navbar-link" @click="closeMenu">Portfolio</RouterLink>
+        </li>
+        <li>
+          <RouterLink to="/sobriete-numerique" class="navbar-link" @click="closeMenu"
+            >Sobriété numérique</RouterLink
+          >
+        </li>
+        <li>
+          <RouterLink to="/laser-game" class="navbar-link" @click="closeMenu"
+            >Laser Game</RouterLink
+          >
+        </li>
+        <li>
+          <RouterLink to="/contact" class="navbar-link" @click="closeMenu">Contact</RouterLink>
+        </li>
       </ul>
     </div>
   </nav>
