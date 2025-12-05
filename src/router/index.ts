@@ -43,10 +43,8 @@ const router = createRouter({
       path: '/laser-game/quiz',
       name: 'quiz',
       component: LasergameQuiz
-    }
     },
-    {
-      path: '/portfolio',
+    { path: '/portfolio',
       name: 'portfolio',
       component: Portfolio
     },
@@ -54,11 +52,6 @@ const router = createRouter({
       name: 'chapter',
       component: ChapterPage 
     }
-
-
-
-
-
   ]
 })
 
