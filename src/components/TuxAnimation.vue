@@ -110,13 +110,13 @@ let intervalId: number | null = null
 const imagesPreloaded = ref(false)
 
 const emotionImages: Record<string, string> = {
-  happy: '/assets/tuxHappy-animation.png',
-  sad: '/assets/tuxTriste1Larme.png',
-  leveMain: '/assets/tuxMainDroiteLever.png',
-  sad2: '/assets/tuxTriste2Larme.png',
-  clinOeil: '/assets/tuxClinOeil.png',
-  parleSad: '/assets/tuxParleTriste.png',
-  normal: '/assets/tuxNormal.png',
+  happy: 'assets/tuxHappy-animation.png',
+  sad: 'assets/tuxTriste1Larme.png',
+  leveMain: 'assets/tuxMainDroiteLever.png',
+  sad2: 'assets/tuxTriste2Larme.png',
+  clinOeil: 'assets/tuxClinOeil.png',
+  parleSad: 'assets/tuxParleTriste.png',
+  normal: 'assets/tuxNormal.png',
 }
 
 const emotionFrames: Record<string, number> = {
