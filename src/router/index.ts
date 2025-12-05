@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import TrailerPage from '../views/TrailerPage.vue'
 import HomePage from '../views/HomeView.vue'
+import FrustratingForm from '@/components/FrustratingForm.vue'
 
 const SESSION_KEY = 'trailer_seen'
 
@@ -16,6 +17,11 @@ const router = createRouter({
       path: '/home',
       name: 'home',
       component: HomePage
+    },
+    {
+      path: '/contact',
+      name: 'contact',
+      component: FrustratingForm
     }
   ]
 })
