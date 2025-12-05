@@ -478,7 +478,7 @@ button { cursor: pointer; font-family: inherit; border: none; outline: none; }
 .solution-box strong { font-size: 1.1rem; }
 
 /* --- TIMELINE --- */
-.lifecycle-section { padding: 5rem 2rem; background: #111827; text-align: center; }
+.lifecycle-section { padding: 5rem 2rem; background: #1F2937; text-align: center; }
 .subtitle-lifecycle { color: #9ca3af; font-style: italic; margin-bottom: 3rem; }
 .timeline { display: flex; justify-content: center; align-items: flex-start; gap: 1rem; flex-wrap: wrap; }
 .step {
@@ -496,10 +496,7 @@ button { cursor: pointer; font-family: inherit; border: none; outline: none; }
 .tux-triste { width: 150px; height: auto; }
 
 /* --- SOLUTIONS --- */
-.resistance-section {
-  padding: 5rem 2rem; background: #0f392b; text-align: center;
-  border-top: 1px solid #064e3b; border-bottom: 1px solid #064e3b;
-}
+.resistance-section {padding: 5rem 2rem; background: #111827; text-align: center;}
 .solutions-deck { display: flex; flex-wrap: wrap; justify-content: center; gap: 2rem; margin-top: 3rem; }
 .solution-card {
   background: #1f2937; width: 300px; border-radius: 15px; overflow: hidden;
@@ -514,7 +511,7 @@ button { cursor: pointer; font-family: inherit; border: none; outline: none; }
 .card-body ul { padding-left: 1.2rem; color: #d1d5db; }
 
 /* --- QUIZ --- */
-.interactive-check { padding: 4rem 2rem; background: #111827; color: white; text-align: center; }
+.interactive-check { padding: 4rem 2rem; background: #1F2937; color: white; text-align: center; }
 .quiz-container {
   background: #1f2937; max-width: 700px; margin: 2rem auto; padding: 2rem;
   border-radius: 20px; display: flex; align-items: center; gap: 2rem; border: 1px solid #374151;
