@@ -58,6 +58,9 @@ const closeMenu = () => {
           >
         </li>
         <li>
+          <RouterLink to="/phone-game" class="navbar-link" @click="closeMenu">Cycle de vie Smartphone</RouterLink>
+        </li>
+        <li>
           <RouterLink to="/contact" class="navbar-link" @click="closeMenu">Contact</RouterLink>
         </li>
       </ul>
